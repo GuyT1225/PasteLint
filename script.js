@@ -35,30 +35,49 @@ function cleanText(text) {
     .trim();
 }
 
-/* SecondDraft rewrite */
 function secondDraft(text) {
-  let t = cleanText(text);
+  let cleaned = cleanText(text);
 
-  const rules = [
-    [/in conclusion,?/gi, ""],
-    [/it is important to note that/gi, ""],
-    [/with that being said,?/gi, ""],
-    [/in today's world,?/gi, ""],
-    [/leverage/gi, "use"],
-    [/utilize/gi, "use"],
-    [/facilitate/gi, "help"],
-    [/robust/gi, "solid"],
-    [/seamless/gi, "smooth"],
-    [/transformative/gi, "useful"],
-    [/in order to/gi, "to"],
-    [/due to the fact that/gi, "because"]
-  ];
+  // Split into sentences
+  let sentences = cleaned.split(/(?<=[.!?])\s+/);
 
-  rules.forEach(([pattern, replace]) => {
-    t = t.replace(pattern, replace);
+  let rewritten = sentences.map(s => {
+    let t = s;
+
+    // Remove leading filler phrases
+    t = t.replace(/^(It is important to note that|It is worth noting that|In conclusion|To summarize|With that being said),?\s*/i, "");
+
+    // Simplify common structures
+    t = t.replace(/plays a (crucial|key|important) role in/gi, "helps");
+    t = t.replace(/is able to/gi, "can");
+    t = t.replace(/in order to/gi, "to");
+    t = t.replace(/due to the fact that/gi, "because");
+
+    // Replace over-formal verbs
+    t = t.replace(/\b(utilize|leverage)\b/gi, "use");
+    t = t.replace(/\b(facilitate)\b/gi, "help");
+    t = t.replace(/\b(demonstrate)\b/gi, "show");
+
+    // Remove fluff words
+    t = t.replace(/\b(very|really|extremely|significantly)\b/gi, "");
+
+    // Tighten sentence
+    t = t.replace(/\s{2,}/g, " ").trim();
+
+    return t;
   });
 
-  return t.replace(/\s{2,}/g, " ").trim();
+  // Join and smooth flow
+  let result = rewritten.join(" ");
+
+  // Final polish
+  result = result
+    .replace(/\s+,/g, ",")
+    .replace(/\s+\./g, ".")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+
+  return result;
 }
 
 /* Helpers */
