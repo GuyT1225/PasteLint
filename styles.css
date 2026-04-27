@@ -632,4 +632,116 @@ textarea:focus {
 .legal-card strong {
   color: var(--text);
 }
+/* SEO landing page additions */
+
+.landing-hero {
+  margin-top: 44px;
+}
+
+.hero-actions {
+  margin-top: 22px;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+#tool {
+  scroll-margin-top: 80px;
+}
+
+.landing-section,
+.landing-info-grid {
+  margin-top: 28px;
+}
+
+.section-heading {
+  max-width: 720px;
+  margin: 0 auto 18px;
+  text-align: center;
+}
+
+.section-heading h2,
+.landing-info-card h2,
+.final-cta h2 {
+  margin: 0 0 8px;
+  letter-spacing: -0.04em;
+}
+
+.section-heading p,
+.landing-info-card li,
+.final-cta p {
+  color: var(--muted);
+}
+
+.example-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+}
+
+.example-card,
+.landing-info-card,
+.final-cta {
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.example-card {
+  padding: 18px;
+  display: grid;
+  gap: 14px;
+}
+
+.example-card strong {
+  color: var(--accent);
+  display: block;
+  margin-bottom: 6px;
+}
+
+.example-card p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.example-card div:last-child {
+  border-top: 1px solid var(--border);
+  padding-top: 14px;
+}
+
+.landing-info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+.landing-info-card {
+  padding: 24px;
+}
+
+.landing-info-card ul {
+  margin-bottom: 0;
+}
+
+.landing-info-card li {
+  margin: 8px 0;
+}
+
+.final-cta {
+  padding: 28px;
+  text-align: center;
+}
+
+.final-cta p {
+  margin-bottom: 18px;
+}
+
+@media (max-width: 900px) {
+  .example-grid,
+  .landing-info-grid {
+    grid-template-columns: 1fr;
+  }
+}
 
