@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>SecondDraft — Make AI Writing Sound Human</title>
+<meta name="description" content="Rewrite AI-sounding text into something natural, clear, and human. No login. No upload. Everything runs in your browser.">
+
+<style>
+:root {
+  --bg: #f7f4ed;
+  --surface: #fffaf0;
+  --surface-2: #f0eadf;
+  --text: #201b16;
+  --muted: #6f665c;
+  --border: #ded4c7;
+  --accent: #245c4f;
+  --accent-2: #d88c46;
+  --accent-text: #ffffff;
+  --shadow: 0 18px 50px rgba(45, 35, 22, 0.12);
+  --radius: 22px;
+  --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  --sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+body[data-theme="dark"] {
+  --bg: #111315;
+  --surface: #181b1f;
+  --surface-2: #22262b;
+  --text: #f3efe7;
+  --muted: #b8aea2;
+  --border: #343a42;
+  --accent: #67d3b0;
+  --accent-2: #f0a85f;
+  --accent-text: #10201b;
+  --shadow: 0 18px 50px rgba(0, 0, 0, 0.36);
+}
+
+body[data-theme="terminal"] {
+  --bg: #050805;
+  --surface: #071007;
+  --surface-2: #0d1c0d;
+  --text: #d7ffd7;
+  --muted: #8ad98a;
+  --border: #1f5f1f;
+  --accent: #59ff72;
+  --accent-2: #b8ff59;
+  --accent-text: #061006;
+  --shadow: 0 0 42px rgba(89, 255, 114, 0.12);
+  --sans: var(--mono);
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  font-family: var(--sans);
+  background:
+    radial-gradient(circle at top left, color-mix(in srgb, var(--accent) 13%, transparent), transparent 34rem),
+    var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+}
+
+a { color: inherit; text-decoration: none; }
+button, select, textarea { font: inherit; }
+
+.site-header {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.header-brand a {
+  font-weight: 850;
+  letter-spacing: -0.03em;
+  font-size: 1.25rem;
+}
+
+.theme-toggle {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.theme-toggle button,
+.segment,
+.quick-actions button,
+.small-copy {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  border-radius: 999px;
+  padding: 8px 12px;
+  cursor: pointer;
+}
+
+.theme-toggle button:hover,
+.segment:hover,
+.quick-actions button:hover,
+.small-copy:hover {
+  border-color: color-mix(in srgb, var(--accent) 55%, var(--border));
+}
+
+body[data-theme="terminal"] * { text-shadow: 0 0 6px rgba(89, 255, 114, 0.2); }
+
+.hero {
+  max-width: 980px;
+  margin: 34px auto 18px;
+  padding: 0 20px;
+  text-align: center;
+}
+
+.hero-kicker {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  padding: 7px 12px;
+  border-radius: 999px;
+  color: var(--muted);
+  font-size: 0.92rem;
+  margin-bottom: 16px;
+}
+
+.hero h1 {
+  margin: 0;
+  font-size: clamp(2.4rem, 7vw, 5.2rem);
+  letter-spacing: -0.075em;
+  line-height: 0.94;
+}
+
+.subtitle {
+  max-width: 760px;
+  margin: 20px auto 8px;
+  font-size: clamp(1.05rem, 2vw, 1.35rem);
+  color: var(--muted);
+}
+
+.subtitle-small {
+  color: var(--muted);
+  margin: 0 auto;
+  font-size: 0.98rem;
+}
+
+main {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 22px 20px 70px;
+}
+
+.tool-shell {
+  background: color-mix(in srgb, var(--surface) 94%, transparent);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: clip;
+}
+
+.tool-header {
+  padding: 28px 28px 16px;
+  display: grid;
+  gap: 6px;
+}
+
+.tool-header h2 { margin: 0; font-size: 1.65rem; letter-spacing: -0.035em; }
+.tool-header p { margin: 0; color: var(--muted); }
+.micro-note { color: var(--accent) !important; font-weight: 700; }
+
+.mode-panel {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  padding: 0 28px 22px;
+  align-items: end;
+}
+
+.control-group {
+  display: grid;
+  gap: 8px;
+}
+
+.control-group label,
+.control-label {
+  font-size: 0.82rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 800;
+}
+
+select, input[type="range"] {
+  width: 100%;
+}
+
+select {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  border-radius: 14px;
+  padding: 11px 12px;
+}
+
+.strength-readout {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.segmented-control {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.segment.active {
+  background: var(--accent);
+  color: var(--accent-text);
+  border-color: var(--accent);
+}
+
+.switch-card {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  border-radius: 16px;
+  padding: 11px 12px;
+  min-height: 46px;
+}
+
+.switch-card input { accent-color: var(--accent); }
+.switch-card strong { display: block; font-size: 0.95rem; }
+.switch-card small { color: var(--muted); display: block; }
+
+.tool-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.textarea-block {
+  padding: 22px 28px;
+  display: grid;
+  gap: 10px;
+}
+
+.textarea-block:first-child { border-right: 1px solid var(--border); }
+.textarea-block label { font-weight: 800; }
+textarea {
+  min-height: 330px;
+  resize: vertical;
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--surface) 80%, var(--surface-2));
+  color: var(--text);
+  padding: 16px;
+  outline: none;
+}
+textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 14%, transparent); }
+.meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.tool-actions {
+  position: sticky;
+  bottom: 0;
+  z-index: 3;
+  display: flex;
+  gap: 10px;
+  padding: 16px 28px;
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(12px);
+  flex-wrap: wrap;
+}
+
+.btn {
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 12px 18px;
+  cursor: pointer;
+  font-weight: 850;
+}
+.btn-primary { background: var(--accent); color: var(--accent-text); border-color: var(--accent); }
+.btn-secondary { background: var(--surface); color: var(--text); }
+.btn-ghost { background: transparent; color: var(--muted); }
+
+.quick-actions {
+  display: flex;
+  gap: 10px;
+  padding: 16px 28px;
+  flex-wrap: wrap;
+}
+
+.insight-panel, .versions-panel, .line-view {
+  margin: 0 28px 24px;
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--surface-2) 56%, transparent);
+  border-radius: 18px;
+  padding: 16px;
+}
+
+.insight-panel h3,
+.versions-panel h3 { margin: 0 0 10px; letter-spacing: -0.025em; }
+.change-list {
+  margin: 0;
+  padding-left: 20px;
+  color: var(--muted);
+}
+.change-list li { margin: 7px 0; }
+
+.version-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.version-card {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  border-radius: 16px;
+  padding: 14px;
+  display: grid;
+  gap: 10px;
+}
+.version-card strong { color: var(--accent); }
+.version-card p { margin: 0; white-space: pre-wrap; color: var(--text); }
+
+.line-view-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.line-view-header span { font-weight: 850; }
+.line-view-header small, .empty-state { color: var(--muted); }
+.line-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  border-top: 1px solid var(--border);
+  padding: 14px 0;
+}
+.line-pair:first-child { border-top: none; }
+.line-pair small { color: var(--muted); text-transform: uppercase; letter-spacing: .06em; font-weight: 800; }
+.line-pair p { margin: 6px 0 0; }
+
+.info {
+  margin-top: 24px;
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 22px;
+}
+.info-card {
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--surface) 92%, transparent);
+  border-radius: var(--radius);
+  padding: 24px;
+}
+.info-card h2, .info-card h3 { margin-top: 0; letter-spacing: -0.035em; }
+.info-card p, .info-card li { color: var(--muted); }
+
+footer {
+  text-align: center;
+  padding: 36px 20px 56px;
+  color: var(--muted);
+}
+
+@media (max-width: 900px) {
+  .mode-panel { grid-template-columns: 1fr 1fr; }
+  .tool-layout, .info, .version-grid, .line-pair { grid-template-columns: 1fr; }
+  .textarea-block:first-child { border-right: none; border-bottom: 1px solid var(--border); }
+}
+
+@media (max-width: 620px) {
+  .site-header { align-items: flex-start; flex-direction: column-reverse; }
+  .mode-panel { grid-template-columns: 1fr; }
+  .tool-actions { position: static; }
+  .hero { margin-top: 10px; }
+}
+</style>
+</head>
+
+<body data-theme="light">
+
+<header class="site-header">
+  <div class="theme-toggle" aria-label="Theme selector">
+    <button data-theme="light" type="button">Light</button>
+    <button data-theme="dark" type="button">Dark</button>
+    <button data-theme="terminal" type="button">Terminal</button>
+  </div>
+
+  <div class="header-brand">
+    <a href="index.html">PasteLint</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-kicker">SecondDraft by PasteLint · browser-only writing cleanup</div>
+  <h1>Make AI writing sound human.</h1>
+
+  <p class="subtitle">
+    Paste stiff, generic, or overly polished text. SecondDraft rewrites it into something natural, clear, and easier to trust.
+  </p>
+
+  <p class="subtitle-small">
+    No login. No uploads. No backend. Everything runs in your browser.
+  </p>
+</section>
+
+<main>
+
+<section class="tool-shell" aria-label="SecondDraft writing tool">
+
+  <div class="tool-header">
+    <h2>Paste your text</h2>
+    <p>We’ll rewrite it to sound more natural.</p>
+    <p class="micro-note">We keep your meaning. Just make it sound better.</p>
+  </div>
+
+  <div class="mode-panel">
+    <div class="control-group">
+      <label for="toneMode">Tone</label>
+      <select id="toneMode">
+        <option value="natural">Natural</option>
+        <option value="concise">Concise</option>
+        <option value="professional">Professional</option>
+        <option value="friendly">Friendly</option>
+        <option value="direct">Direct</option>
+      </select>
+    </div>
+
+    <div class="control-group">
+      <label for="rewriteStrength">Rewrite strength</label>
+      <input id="rewriteStrength" type="range" min="1" max="3" value="2">
+      <div class="strength-readout"><span>Light</span><span id="strengthLabel">Balanced</span><span>Strong</span></div>
+    </div>
+
+    <label class="switch-card" for="humanizeMode">
+      <input id="humanizeMode" type="checkbox" checked>
+      <span><strong>Humanize AI writing</strong><small>Vary rhythm, reduce robotic polish.</small></span>
+    </label>
+
+    <div class="control-group">
+      <span class="control-label">View</span>
+      <div class="segmented-control" role="radiogroup" aria-label="View mode">
+        <button id="paragraphMode" class="segment active" type="button">Paragraph</button>
+        <button id="lineMode" class="segment" type="button">Line by line</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="tool-layout" id="paragraphView">
+
+    <div class="textarea-block">
+      <label for="input">Original text</label>
+      <textarea id="input" placeholder="Paste your AI draft, email, post, event description, or messy copied text here..."></textarea>
+      <div class="meta">
+        <span id="charCount">0 chars</span>
+        <span id="wordCount">0 words</span>
+      </div>
+    </div>
+
+    <div class="textarea-block">
+      <label for="output">SecondDraft output</label>
+      <textarea id="output" placeholder="Your more natural rewrite will appear here..." readonly></textarea>
+      <div class="meta">
+        <span id="outputCharCount">0 chars</span>
+        <span id="outputWordCount">0 words</span>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="line-view" id="lineView" hidden>
+    <div class="line-view-header">
+      <span>Line-by-line rewrite</span>
+      <small>Each non-empty line is rewritten separately.</small>
+    </div>
+    <div id="lineResults" class="line-results">
+      <p class="empty-state">Paste text to see line-by-line rewrites.</p>
+    </div>
+  </div>
+
+  <div class="tool-actions">
+    <button id="rewriteBtn" class="btn btn-primary">Make this sound human</button>
+    <button id="cleanBtn" class="btn btn-secondary">Clean it up</button>
+    <button id="versionsBtn" class="btn btn-secondary">Generate 3 versions</button>
+    <button id="copyBtn" class="btn btn-secondary">Copy</button>
+    <button id="clearBtn" class="btn btn-ghost">Clear</button>
+  </div>
+
+  <div class="quick-actions" aria-label="Quick output actions">
+    <button data-action="shorter" type="button">Make it shorter</button>
+    <button data-action="clearer" type="button">Make it clearer</button>
+    <button data-action="simpler" type="button">Simplify language</button>
+  </div>
+
+  <div id="insightPanel" class="insight-panel" hidden>
+    <h3>Why this rewrite works</h3>
+    <ul id="changeList" class="change-list"></ul>
+  </div>
+
+  <div id="versionsPanel" class="versions-panel" hidden></div>
+
+</section>
+
+<section class="info">
+  <div class="info-card">
+    <h2>What SecondDraft does</h2>
+    <p>
+      SecondDraft takes text that feels overly polished, repetitive, vague, or robotic and rewrites it into something clearer and more natural.
+    </p>
+    <ul>
+      <li>Removes filler phrases</li>
+      <li>Simplifies inflated wording</li>
+      <li>Improves flow and readability</li>
+      <li>Lets you choose tone and rewrite strength</li>
+      <li>Creates multiple rewrite versions</li>
+      <li>Keeps your original meaning intact</li>
+    </ul>
+  </div>
+
+  <div class="info-card">
+    <h3>Privacy-first by design</h3>
+    <p>
+      This version runs entirely in your browser. Your text is not uploaded, stored, or sent to an AI service.
+    </p>
+    <p>
+      That makes it useful for quick drafts, public-facing copy, library text, IVR scripts, internal notes, and anything you want to clean before sharing.
+    </p>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <p>PasteLint — clean text for everybody</p>
+</footer>
+
+<script>
+const $ = (id) => document.getElementById(id);
+
+const input = $('input');
+const output = $('output');
+const toneMode = $('toneMode');
+const rewriteStrength = $('rewriteStrength');
+const strengthLabel = $('strengthLabel');
+const humanizeMode = $('humanizeMode');
+const paragraphView = $('paragraphView');
+const lineView = $('lineView');
+const lineResults = $('lineResults');
+const versionsPanel = $('versionsPanel');
+const insightPanel = $('insightPanel');
+const changeList = $('changeList');
+
+const weakIntensifiers = /\b(very|really|actually|basically|simply|quite|rather|somewhat|extremely)\b\s*/gi;
+
+const replacements = [
+  [/\bit is important to note that\b/gi, ''],
+  [/\bit should be noted that\b/gi, ''],
+  [/\bin today's fast[- ]paced (world|environment)\b/gi, 'today'],
+  [/\bplays a crucial role in\b/gi, 'helps'],
+  [/\bplays an important role in\b/gi, 'helps'],
+  [/\butilize\b/gi, 'use'],
+  [/\bfacilitate\b/gi, 'help'],
+  [/\bimplement\b/gi, 'use'],
+  [/\bcommence\b/gi, 'start'],
+  [/\bterminate\b/gi, 'end'],
+  [/\bassist\b/gi, 'help'],
+  [/\bindividuals\b/gi, 'people'],
+  [/\badditional\b/gi, 'more'],
+  [/\bdue to the fact that\b/gi, 'because'],
+  [/\bin order to\b/gi, 'to'],
+  [/\bwith regard to\b/gi, 'about'],
+  [/\bin the event that\b/gi, 'if'],
+  [/\bat this point in time\b/gi, 'now'],
+  [/\ba wide range of\b/gi, 'many'],
+  [/\brobust\b/gi, 'strong'],
+  [/\bleverage\b/gi, 'use'],
+  [/\bseamless\b/gi, 'smooth'],
+  [/\benhance\b/gi, 'improve'],
+  [/\boptimize\b/gi, 'improve']
+];
+
+function countWords(text) {
+  return (text.trim().match(/\b[\w'-]+\b/g) || []).length;
+}
+
+function updateCounts() {
+  $('charCount').textContent = `${input.value.length} chars`;
+  $('wordCount').textContent = `${countWords(input.value)} words`;
+  $('outputCharCount').textContent = `${output.value.length} chars`;
+  $('outputWordCount').textContent = `${countWords(output.value)} words`;
+}
+
+function cleanText(text, changes = []) {
+  const before = text;
+  let cleaned = text
+    .replace(/[\u200B-\u200D\uFEFF]/g, '')
+    .replace(/[“”]/g, '"')
+    .replace(/[‘’]/g, "'")
+    .replace(/[–—]/g, '-')
+    .replace(/\s+\n/g, '\n')
+    .replace(/\n{3,}/g, '\n\n')
+    .replace(/[ \t]{2,}/g, ' ')
+    .trim();
+
+  if (before !== cleaned) changes.push('Cleaned hidden characters, smart punctuation, and extra spacing.');
+  return cleaned;
+}
+
+function splitSentences(text) {
+  return text.match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [];
+}
+
+function sentenceCase(text) {
+  return text.replace(/(^\s*[a-z])/, (m) => m.toUpperCase());
+}
+
+function simplifySentence(sentence, strength, changes) {
+  let s = sentence.trim();
+  if (!s) return '';
+
+  const original = s;
+  for (const [pattern, replacement] of replacements) {
+    if (pattern.test(s)) {
+      s = s.replace(pattern, replacement);
+      changes.push('Simplified inflated or overly formal wording.');
+    }
+    pattern.lastIndex = 0;
+  }
+
+  if (strength >= 2 && weakIntensifiers.test(s)) {
+    s = s.replace(weakIntensifiers, '');
+    changes.push('Removed weak intensifiers like very, really, and basically.');
+  }
+  weakIntensifiers.lastIndex = 0;
+
+  if (strength >= 3) {
+    s = s
+      .replace(/\bthis means that\b/gi, 'so')
+      .replace(/\bthere are many ways in which\b/gi, 'many ways')
+      .replace(/\bthe process of\b/gi, '')
+      .replace(/\bin a manner that is\b/gi, 'in a way that is');
+  }
+
+  s = s.replace(/\s{2,}/g, ' ').replace(/\s+([,.!?])/g, '$1').trim();
+  if (s && !/[.!?]$/.test(s)) s += '.';
+  s = sentenceCase(s);
+
+  if (original !== s && strength >= 2) changes.push('Smoothed sentence structure while preserving the original meaning.');
+  return s;
+}
+
+function applyTone(text, tone, changes) {
+  let t = text;
+  if (tone === 'concise') {
+    t = t.replace(/\bI think that\b/gi, '').replace(/\bwe believe that\b/gi, 'we believe');
+    changes.push('Adjusted the rewrite for a more concise tone.');
+  }
+  if (tone === 'professional') {
+    t = t.replace(/\bget\b/gi, 'receive').replace(/\ba lot of\b/gi, 'many');
+    changes.push('Adjusted the rewrite for a more professional tone.');
+  }
+  if (tone === 'friendly') {
+    t = t.replace(/\bYou can\b/g, 'You can also').replace(/\bPlease\b/g, 'Please feel free to');
+    changes.push('Added a warmer, friendlier feel.');
+  }
+  if (tone === 'direct') {
+    t = t.replace(/\bplease feel free to\b/gi, '').replace(/\bif possible,?\s*/gi, '');
+    changes.push('Made the rewrite more direct.');
+  }
+  return t.replace(/\s{2,}/g, ' ').trim();
+}
+
+function humanizeText(text, strength, changes) {
+  if (!humanizeMode.checked) return text;
+  let t = text
+    .replace(/\bdo not\b/gi, "don't")
+    .replace(/\bcannot\b/gi, "can't")
+    .replace(/\bwill not\b/gi, "won't")
+    .replace(/\bit is\b/gi, "it's")
+    .replace(/\bthat is\b/gi, "that's");
+
+  if (strength >= 2) {
+    t = t.replace(/\. This helps /g, '. It helps ');
+  }
+  if (strength >= 3) {
+    t = t.replace(/\bThis tool\b/g, 'It');
+  }
+  if (text !== t) changes.push('Added more natural rhythm and contractions where appropriate.');
+  return t;
+}
+
+function dedupeChanges(changes) {
+  return [...new Set(changes)].slice(0, 7);
+}
+
+function rewriteText(text, tone = toneMode.value, strength = Number(rewriteStrength.value)) {
+  const changes = [];
+  const cleaned = cleanText(text, changes);
+  const sentences = splitSentences(cleaned);
+  let rewritten = sentences.map(s => simplifySentence(s, strength, changes)).join(' ');
+  rewritten = applyTone(rewritten, tone, changes);
+  rewritten = humanizeText(rewritten, strength, changes);
+  rewritten = cleanText(rewritten, changes);
+
+  if (!rewritten && cleaned) rewritten = cleaned;
+  if (rewritten === cleaned) changes.push('The text was already fairly clean, so only light cleanup was applied.');
+
+  return { text: rewritten, changes: dedupeChanges(changes) };
+}
+
+function renderChanges(changes) {
+  changeList.innerHTML = '';
+  changes.forEach(change => {
+    const li = document.createElement('li');
+    li.textContent = change;
+    changeList.appendChild(li);
+  });
+  insightPanel.hidden = changes.length === 0;
+}
+
+function runRewrite() {
+  const result = rewriteText(input.value);
+  output.value = result.text;
+  renderChanges(result.changes);
+  renderLineView();
+  updateCounts();
+}
+
+function runCleanOnly() {
+  const changes = [];
+  output.value = cleanText(input.value, changes);
+  renderChanges(dedupeChanges(changes));
+  renderLineView();
+  updateCounts();
+}
+
+function renderLineView() {
+  if (lineView.hidden) return;
+  const lines = input.value.split(/\n+/).map(l => l.trim()).filter(Boolean);
+  lineResults.innerHTML = '';
+  if (!lines.length) {
+    lineResults.innerHTML = '<p class="empty-state">Paste text to see line-by-line rewrites.</p>';
+    return;
+  }
+  lines.forEach(line => {
+    const result = rewriteText(line);
+    const pair = document.createElement('div');
+    pair.className = 'line-pair';
+    pair.innerHTML = `<div><small>Original</small><p></p></div><div><small>SecondDraft</small><p></p></div>`;
+    pair.querySelectorAll('p')[0].textContent = line;
+    pair.querySelectorAll('p')[1].textContent = result.text;
+    lineResults.appendChild(pair);
+  });
+}
+
+function generateVersions() {
+  const base = input.value.trim();
+  if (!base) return;
+  const options = [
+    ['Natural', 'natural', 2],
+    ['Concise', 'concise', 3],
+    ['Direct', 'direct', 3]
+  ];
+  versionsPanel.hidden = false;
+  versionsPanel.innerHTML = '<h3>Choose a version</h3><div class="version-grid"></div>';
+  const grid = versionsPanel.querySelector('.version-grid');
+
+  options.forEach(([label, tone, strength]) => {
+    const result = rewriteText(base, tone, strength);
+    const card = document.createElement('article');
+    card.className = 'version-card';
+    card.innerHTML = `<strong>${label}</strong><p></p><button class="small-copy" type="button">Copy this version</button>`;
+    card.querySelector('p').textContent = result.text;
+    card.querySelector('button').addEventListener('click', async () => {
+      output.value = result.text;
+      renderChanges(result.changes);
+      updateCounts();
+      await navigator.clipboard.writeText(result.text);
+      card.querySelector('button').textContent = 'Copied';
+      setTimeout(() => card.querySelector('button').textContent = 'Copy this version', 1200);
+    });
+    grid.appendChild(card);
+  });
+}
+
+function quickAction(action) {
+  let text = output.value || input.value;
+  if (!text.trim()) return;
+  const changes = [];
+  if (action === 'shorter') {
+    text = rewriteText(text, 'concise', 3).text;
+    changes.push('Shortened the current output.');
+  }
+  if (action === 'clearer') {
+    text = rewriteText(text, 'natural', 2).text;
+    changes.push('Clarified the current output.');
+  }
+  if (action === 'simpler') {
+    text = rewriteText(text, 'direct', 3).text;
+    changes.push('Simplified the language in the current output.');
+  }
+  output.value = text;
+  renderChanges(changes);
+  updateCounts();
+}
+
+$('rewriteBtn').addEventListener('click', runRewrite);
+$('cleanBtn').addEventListener('click', runCleanOnly);
+$('versionsBtn').addEventListener('click', generateVersions);
+$('clearBtn').addEventListener('click', () => {
+  input.value = '';
+  output.value = '';
+  versionsPanel.hidden = true;
+  insightPanel.hidden = true;
+  lineResults.innerHTML = '<p class="empty-state">Paste text to see line-by-line rewrites.</p>';
+  updateCounts();
+});
+$('copyBtn').addEventListener('click', async () => {
+  if (!output.value) return;
+  await navigator.clipboard.writeText(output.value);
+  $('copyBtn').textContent = 'Copied';
+  setTimeout(() => $('copyBtn').textContent = 'Copy', 1200);
+});
+
+input.addEventListener('input', () => { updateCounts(); renderLineView(); });
+output.addEventListener('input', updateCounts);
+rewriteStrength.addEventListener('input', () => {
+  strengthLabel.textContent = ['Light', 'Balanced', 'Strong'][Number(rewriteStrength.value) - 1];
+});
+
+document.querySelectorAll('.quick-actions button').forEach(btn => {
+  btn.addEventListener('click', () => quickAction(btn.dataset.action));
+});
+
+document.querySelectorAll('.theme-toggle button').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.body.dataset.theme = btn.dataset.theme;
+    localStorage.setItem('pastelint-theme', btn.dataset.theme);
+  });
+});
+
+$('paragraphMode').addEventListener('click', () => {
+  paragraphView.hidden = false;
+  lineView.hidden = true;
+  $('paragraphMode').classList.add('active');
+  $('lineMode').classList.remove('active');
+});
+$('lineMode').addEventListener('click', () => {
+  paragraphView.hidden = true;
+  lineView.hidden = false;
+  $('lineMode').classList.add('active');
+  $('paragraphMode').classList.remove('active');
+  renderLineView();
+});
+
+const savedTheme = localStorage.getItem('pastelint-theme');
+if (savedTheme) document.body.dataset.theme = savedTheme;
+updateCounts();
+</script>
+</body>
+</html>
