@@ -745,3 +745,61 @@ textarea:focus {
   }
 }
 
+/* Conversion polish for AI text landing page */
+
+.example-inline {
+  max-width: 760px;
+  margin: 20px auto 18px;
+  padding: 16px 18px;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--surface) 94%, transparent);
+  box-shadow: var(--shadow);
+  font-size: 0.95rem;
+}
+
+.example-inline p {
+  margin: 7px 0;
+  color: var(--muted);
+}
+
+.example-inline strong {
+  color: var(--accent);
+}
+
+.cta-note {
+  margin: 10px auto 0;
+  font-size: 0.86rem;
+  color: var(--muted);
+  text-align: center;
+}
+
+.micro-benefits {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.micro-benefits li {
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--surface-2) 52%, transparent);
+  border-radius: 999px;
+  padding: 7px 10px;
+  color: var(--muted);
+  font-size: 0.86rem;
+  font-weight: 700;
+}
+
+@media (max-width: 700px) {
+  .example-inline {
+    margin-left: 20px;
+    margin-right: 20px;
+  }
+
+  .micro-benefits {
+    display: grid;
+  }
+}
