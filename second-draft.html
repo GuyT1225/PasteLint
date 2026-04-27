@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>SecondDraft — Make AI Writing Sound Human</title>
-<meta name="description" content="Rewrite AI-sounding text into something natural, clear, and human. No login. No upload. Everything runs in your browser.">
+<meta name="description" content="Rewrite ChatGPT and AI-generated text so it sounds natural, clear, and human. No login. No upload. Everything runs in your browser.">
+<link rel="canonical" href="https://guyt1225.github.io/pastelint/second-draft.html">
 
 <link rel="stylesheet" href="styles.css">
 </head>
@@ -13,23 +14,24 @@
 <body data-theme="light">
 
 <header class="site-header">
+  <div class="header-brand">
+    <a href="index.html">PasteLint</a>
+  </div>
+
   <div class="theme-toggle" aria-label="Theme selector">
     <button data-theme="light" type="button">Light</button>
     <button data-theme="dark" type="button">Dark</button>
     <button data-theme="terminal" type="button">Terminal</button>
   </div>
-
-  <div class="header-brand">
-    <a href="index.html">PasteLint</a>
-  </div>
 </header>
 
 <section class="hero">
   <div class="hero-kicker">SecondDraft by PasteLint · browser-only writing cleanup</div>
+
   <h1>Make AI writing sound human.</h1>
 
   <p class="subtitle">
-    Paste stiff, generic, or overly polished text. SecondDraft rewrites it into something natural, clear, and easier to trust.
+    Rewrite ChatGPT and AI-generated text so it sounds natural, clear, and human.
   </p>
 
   <p class="subtitle-small">
@@ -68,12 +70,19 @@
         <div class="control-group">
           <label for="rewriteStrength">Rewrite strength</label>
           <input id="rewriteStrength" type="range" min="1" max="3" value="2">
-          <div class="strength-readout"><span>Light</span><span id="strengthLabel">Balanced</span><span>Strong</span></div>
+          <div class="strength-readout">
+            <span>Light</span>
+            <span id="strengthLabel">Balanced</span>
+            <span>Strong</span>
+          </div>
         </div>
 
         <label class="switch-card" for="humanizeMode">
           <input id="humanizeMode" type="checkbox" checked>
-          <span><strong>Humanize AI writing</strong><small>Vary rhythm, reduce robotic polish.</small></span>
+          <span>
+            <strong>Humanize AI writing</strong>
+            <small>Vary rhythm, reduce robotic polish.</small>
+          </span>
         </label>
 
         <div class="control-group">
@@ -132,6 +141,7 @@
     <button id="moreOptionsToggle" class="disclosure-toggle" type="button" aria-expanded="false" aria-controls="moreOptions">
       More options <span>Clean only or generate alternatives</span>
     </button>
+
     <div id="moreOptions" class="disclosure-content" hidden>
       <div class="secondary-actions">
         <button id="cleanBtn" class="btn btn-secondary">Clean it up</button>
@@ -141,7 +151,9 @@
   </div>
 
   <div id="outputTools" class="output-tools" hidden>
-    <button id="insightToggle" class="btn btn-secondary" type="button" aria-expanded="false" aria-controls="insightPanel">Why this works</button>
+    <button id="insightToggle" class="btn btn-secondary" type="button" aria-expanded="false" aria-controls="insightPanel">
+      Why this works
+    </button>
   </div>
 
   <div class="quick-actions" aria-label="Quick output actions" hidden>
@@ -188,12 +200,7 @@
 
 </main>
 
-<footer>
-  <p>PasteLint — clean text for everybody</p>
-</footer>
-
-<script src="scripts.js"></script>
-  <footer class="site-footer">
+<footer class="site-footer">
   <div class="footer-inner">
     <p class="footer-brand">PasteLint — free browser-based text tools.</p>
     <p class="footer-note">No login. No upload. Everything runs in your browser.</p>
@@ -204,9 +211,11 @@
         <p>
           <a href="second-draft.html">SecondDraft</a>
           <span>|</span>
-          <a href="index.html#tool">Clean Text</a>
+          <a href="make-ai-text-sound-human.html">Make AI text sound human</a>
           <span>|</span>
-          <a href="index.html">PasteLint Home</a>
+          <a href="clean-chatgpt-output.html">Clean ChatGPT output</a>
+          <span>|</span>
+          <a href="fix-text-from-pdf.html">Fix text from PDF</a>
         </p>
       </div>
 
@@ -223,5 +232,7 @@
     </div>
   </div>
 </footer>
+
+<script src="scripts.js"></script>
 </body>
 </html>
