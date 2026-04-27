@@ -86,6 +86,8 @@ function secondDraft(text, tone="natural"){
   const input=document.getElementById("input");
   const output=document.getElementById("output");
   const rewriteBtn=document.getElementById("rewriteBtn");
+  const versionsBtn=document.getElementById("versionsBtn");
+  const versionsPanel=document.getElementById("versionsPanel");
   const copyBtn=document.getElementById("copyBtn");
   const clearBtn=document.getElementById("clearBtn");
   const tone=document.getElementById("toneMode");
@@ -94,9 +96,160 @@ function secondDraft(text, tone="natural"){
 
   function runRewrite(){
     output.value=secondDraft(input.value, tone?.value || "natural");
+    if (versionsPanel) versionsPanel.hidden = true;
+  }
+
+  function makeVersion(text, label, toneName){
+    return `// PasteLint v2 — full script (clean + SecondDraft + tone + versions)
+
+const body = document.body;
+
+/* =========================
+   THEME
+========================= */
+function setTheme(theme) {
+  body.classList.remove("light", "dark", "terminal");
+  body.classList.add(theme);
+  localStorage.setItem("theme", theme);
+
+  document.querySelectorAll("[data-theme]").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.theme === theme);
+  });
+}
+
+(function initTheme(){
+  const saved = localStorage.getItem("theme") || "light";
+  setTheme(saved);
+
+  document.querySelectorAll("[data-theme]").forEach(btn => {
+    btn.addEventListener("click", () => setTheme(btn.dataset.theme));
+  });
+})();
+
+/* =========================
+   CLEAN TEXT
+========================= */
+function cleanText(text) {
+  return text
+    .replace(/\u00A0/g, " ")
+    .replace(/[\u200B-\u200D\uFEFF]/g, "")
+    .replace(/[“”]/g, '"')
+    .replace(/[‘’]/g, "'")
+    .replace(/[–—]/g, "-")
+    .replace(/[ \t]+/g, " ")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
+/* =========================
+   TONE
+========================= */
+function applyTone(t, tone){
+  if(tone==="concise"){
+    t=t.replace(/\b(that|actually|basically|kind of|sort of)\b/gi,"");
+  }
+
+  if(tone==="professional"){
+    t=t.replace(/\bgonna\b/gi,"going to");
+  }
+
+  if(tone==="friendly"){
+    t=t.replace(/\bshould\b/gi,"can");
+  }
+
+  if(tone==="direct"){
+    t=t.replace(/\bmay be able to\b/gi,"can");
+  }
+
+  return t.trim();
+}
+
+/* =========================
+   SECOND DRAFT ENGINE
+========================= */
+function secondDraft(text, tone="natural"){
+  let cleaned = cleanText(text);
+  if(!cleaned) return "";
+
+  let sentences = cleaned.split(/(?<=[.!?])\s+/);
+
+  return sentences.map(s=>{
+    let t=s.trim();
+
+    // Remove filler openings
+    t=t.replace(/^(It is important to note that|In conclusion|With that being said),?\s*/i,"");
+
+    // Simplify structure
+    t=t.replace(/plays a .* role in/gi,"helps");
+
+    // Vocabulary cleanup
+    t=t.replace(/\b(utilize|leverage)\b/gi,"use");
+
+    // Remove fluff
+    t=t.replace(/\b(very|really|extremely)\b/gi,"");
+
+    // Tone pass
+    t=applyTone(t,tone);
+
+    return t.replace(/\s{2,}/g," ");
+  }).join(" ").trim();
+}
+
+/* =========================
+   INIT SECOND DRAFT UI
+========================= */
+(function(){
+  const input=document.getElementById("input");
+  const output=document.getElementById("output");
+  const rewriteBtn=document.getElementById("rewriteBtn");
+  const versionsBtn=document.getElementById("versionsBtn");
+  const versionsPanel=document.getElementById("versionsPanel");
+  const copyBtn=document.getElementById("copyBtn");
+  const clearBtn=document.getElementById("clearBtn");
+  const tone=document.getElementById("toneMode");
+
+  if(!rewriteBtn || !input || !output) return;
+
+  function runRewrite(){
+    output.value=secondDraft(input.value, tone?.value || "natural");
+    if (versionsPanel) versionsPanel.hidden = true;
+  }
+
+  function makeVersion(text, label, toneName){
+    return `
+      <div class="version-card">
+        <h3>${label}</h3>
+        <p>${secondDraft(text, toneName)}</p>
+        <button class="btn btn-secondary" type="button" data-copy-version="${toneName}">
+          Copy this version
+        </button>
+      </div>
+    `;
+  }
+
+  function showVersions(){
+    if(!input.value.trim() || !versionsPanel) return;
+
+    versionsPanel.innerHTML =
+      makeVersion(input.value, "Version 1 — Natural", "natural") +
+      makeVersion(input.value, "Version 2 — Concise", "concise") +
+      makeVersion(input.value, "Version 3 — Direct", "direct");
+
+    versionsPanel.hidden = false;
+
+    versionsPanel.querySelectorAll("[data-copy-version]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const selectedTone = btn.getAttribute("data-copy-version");
+        const text = secondDraft(input.value, selectedTone);
+        navigator.clipboard.writeText(text);
+        output.value = text;
+      });
+    });
   }
 
   rewriteBtn.addEventListener("click", runRewrite);
+
+  versionsBtn?.addEventListener("click", showVersions);
 
   copyBtn?.addEventListener("click", ()=>{
     navigator.clipboard.writeText(output.value);
@@ -105,9 +258,61 @@ function secondDraft(text, tone="natural"){
   clearBtn?.addEventListener("click", ()=>{
     input.value="";
     output.value="";
+    if (versionsPanel) {
+      versionsPanel.innerHTML="";
+      versionsPanel.hidden=true;
+    }
   });
 
-})();// PasteLint v2 — clean, simple script
+})();
+      <div class="version-card">
+        <h3>${label}</h3>
+        <p>${secondDraft(text, toneName)}</p>
+        <button class="btn btn-secondary" type="button" data-copy-version="${toneName}">
+          Copy this version
+        </button>
+      </div>
+    `;
+  }
+
+  function showVersions(){
+    if(!input.value.trim() || !versionsPanel) return;
+
+    versionsPanel.innerHTML =
+      makeVersion(input.value, "Version 1 — Natural", "natural") +
+      makeVersion(input.value, "Version 2 — Concise", "concise") +
+      makeVersion(input.value, "Version 3 — Direct", "direct");
+
+    versionsPanel.hidden = false;
+
+    versionsPanel.querySelectorAll("[data-copy-version]").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const selectedTone = btn.getAttribute("data-copy-version");
+        const text = secondDraft(input.value, selectedTone);
+        navigator.clipboard.writeText(text);
+        output.value = text;
+      });
+    });
+  }
+
+  rewriteBtn.addEventListener("click", runRewrite);
+
+  versionsBtn?.addEventListener("click", showVersions);
+
+  copyBtn?.addEventListener("click", ()=>{
+    navigator.clipboard.writeText(output.value);
+  });
+
+  clearBtn?.addEventListener("click", ()=>{
+    input.value="";
+    output.value="";
+    if (versionsPanel) {
+      versionsPanel.innerHTML="";
+      versionsPanel.hidden=true;
+    }
+  });
+
+})();
 
 const body = document.body;
 
