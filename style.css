@@ -414,3 +414,29 @@ body.terminal .micro-note {
   color: #86efac;
   text-shadow: 0 0 6px rgba(34, 197, 94, 0.3);
 }
+.versions-panel {
+  margin-top: 18px;
+  display: grid;
+  gap: 14px;
+}
+
+.version-card {
+  background: var(--soft);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 16px;
+}
+
+.version-card h3 {
+  margin: 0 0 8px;
+}
+
+.version-card p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.version-card button {
+  margin-top: 12px;
+}
