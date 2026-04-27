@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://guyt1225.github.io/pastelint/sitemap.xml
