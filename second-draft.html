@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>SecondDraft — Make AI Writing Sound Human</title>
+<meta name="description" content="Rewrite AI-sounding text into something natural, clear, and human. No login. No upload. Everything runs in your browser.">
+
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header class="site-header">
+  <div class="theme-toggle">
+    <button data-theme="light">Light</button>
+    <button data-theme="dark">Dark</button>
+    <button data-theme="terminal">Terminal</button>
+  </div>
+
+  <div class="header-brand">
+    <a href="index.html">PasteLint</a>
+  </div>
+</header>
+
+<section class="hero">
+  <h1>Make AI writing sound human.</h1>
+
+  <p class="subtitle">
+    Paste stiff, generic, or AI-sounding text. SecondDraft rewrites it to feel natural and readable.
+  </p>
+
+  <p class="subtitle-small">
+    No login. No uploads. Everything runs in your browser.
+  </p>
+</section>
+
+<main>
+
+<section class="tool-shell">
+
+  <div class="tool-header">
+    <h2>Paste your text</h2>
+    <p>We’ll rewrite it to sound more natural.</p>
+    <p class="micro-note">We keep your meaning. Just make it sound better.</p>
+  </div>
+
+  <div class="mode-panel">
+    <div class="control-group">
+      <label for="toneMode">Tone</label>
+      <select id="toneMode">
+        <option value="natural">Natural</option>
+        <option value="concise">Concise</option>
+        <option value="professional">Professional</option>
+        <option value="friendly">Friendly</option>
+        <option value="direct">Direct</option>
+      </select>
+    </div>
+
+    <div class="control-group">
+      <span class="control-label">View</span>
+      <div class="segmented-control" role="radiogroup" aria-label="View mode">
+        <button id="paragraphMode" class="segment active" type="button">Paragraph</button>
+        <button id="lineMode" class="segment" type="button">Line by Line</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="tool-layout" id="paragraphView">
+
+    <div class="textarea-block">
+      <label for="input">Original text</label>
+      <textarea id="input" placeholder="Paste your text here..."></textarea>
+      <div class="meta">
+        <span id="charCount">0 chars</span>
+        <span id="wordCount">0 words</span>
+      </div>
+    </div>
+
+    <div class="textarea-block">
+      <label for="output">SecondDraft output</label>
+      <textarea id="output" placeholder="Rewritten text will appear here..." readonly></textarea>
+      <div class="meta">
+        <span id="outputCharCount">0 chars</span>
+        <span id="outputWordCount">0 words</span>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="line-view" id="lineView" hidden>
+    <div class="line-view-header">
+      <span>Line by line rewrite</span>
+      <small>Each non-empty line is rewritten separately.</small>
+    </div>
+    <div id="lineResults" class="line-results">
+      <p class="empty-state">Paste text to see line-by-line rewrites.</p>
+    </div>
+  </div>
+
+  <div class="tool-actions">
+    <button id="rewriteBtn" class="btn btn-primary">Rewrite text</button>
+    <button id="versionsBtn" class="btn btn-secondary">Generate 3 versions</button>
+    <button id="copyBtn" class="btn btn-secondary">Copy</button>
+    <button id="clearBtn" class="btn btn-ghost">Clear</button>
+  </div>
+
+  <div class="quick-actions">
+    <button data-action="shorter" type="button">Make it shorter</button>
+    <button data-action="clearer" type="button">Make it clearer</button>
+    <button data-action="simpler" type="button">Simplify language</button>
+  </div>
+
+  <div id="versionsPanel" class="versions-panel" hidden></div>
+
+</section>
+
+<section class="info">
+  <h2>What SecondDraft does</h2>
+
+  <p>
+    SecondDraft takes text that feels overly polished, repetitive, or robotic and rewrites it into something clearer and more natural.
+  </p>
+
+  <ul>
+    <li>Removes filler phrases</li>
+    <li>Simplifies wording</li>
+    <li>Improves flow and readability</li>
+    <li>Lets you choose tone</li>
+    <li>Creates multiple rewrite versions</li>
+    <li>Keeps original meaning intact</li>
+  </ul>
+</section>
+
+</main>
+
+<footer>
+  <p>PasteLint — clean text for everybody</p>
+</footer>
+
+<script src="script.js"></script>
+</body>
+</html>
