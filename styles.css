@@ -508,3 +508,18 @@ main {
   justify-content: flex-start;
   padding: 18px 28px;
 }
+#tool {
+  scroll-margin-top: 80px;
+}
+
+textarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--accent) 12%, transparent);
+}
+.btn-secondary {
+  opacity: 0.9;
+}
+
+.btn-ghost {
+  opacity: 0.6;
+}
