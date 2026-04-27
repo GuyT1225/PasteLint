@@ -753,7 +753,7 @@ textarea:focus {
   padding: 16px 18px;
   border: 1px solid var(--border);
   border-radius: 18px;
-  background: color-mix(in srgb, var(--surface) 94%, transparent);
+  background: var(--surface);
   box-shadow: var(--shadow);
   font-size: 0.95rem;
 }
@@ -764,7 +764,8 @@ textarea:focus {
 }
 
 .example-inline strong {
-  color: var(--accent);
+  text-transform: uppercase;
+  font-size: 0.75rem;
 }
 
 .cta-note {
@@ -802,4 +803,11 @@ textarea:focus {
   .micro-benefits {
     display: grid;
   }
+}
+.hero-actions {
+  margin-bottom: 8px;
+}
+
+.cta-note {
+  margin-top: 6px;
 }
