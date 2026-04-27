@@ -449,3 +449,62 @@ footer {
   opacity: 0.78;
 }
 
+.site-header {
+  max-width: 1180px;
+  padding: 20px 24px;
+}
+
+.header-brand {
+  order: 1;
+}
+
+.theme-toggle {
+  order: 2;
+}
+
+.hero {
+  margin: 54px auto 28px;
+}
+
+.hero h1 {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.subtitle {
+  max-width: 680px;
+  margin-top: 18px;
+}
+
+.subtitle-small {
+  margin-top: 12px;
+}
+
+.hero-actions {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+main {
+  padding-top: 8px;
+}
+
+.tool-shell {
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+.tool-header {
+  padding: 26px 28px 18px;
+}
+
+.tool-layout textarea {
+  min-height: 290px;
+}
+
+.tool-actions {
+  justify-content: flex-start;
+  padding: 18px 28px;
+}
