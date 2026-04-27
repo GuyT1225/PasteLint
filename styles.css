@@ -811,3 +811,20 @@ textarea:focus {
 .cta-note {
   margin-top: 6px;
 }
+.seo-phrases {
+  max-width: 760px;
+  margin: 40px auto;
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--surface);
+}
+
+.seo-phrases h2 {
+  margin-bottom: 10px;
+}
+
+.seo-phrases ul {
+  padding-left: 18px;
+  color: var(--muted);
+}
