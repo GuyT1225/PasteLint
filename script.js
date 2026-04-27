@@ -1,4 +1,113 @@
-// PasteLint v2 — clean, simple script
+// PasteLint v2 — final script with tone + line mode
+
+const body = document.body;
+
+/* Theme */
+function setTheme(theme) {
+  body.classList.remove("light", "dark", "terminal");
+  body.classList.add(theme);
+  localStorage.setItem("theme", theme);
+
+  document.querySelectorAll("[data-theme]").forEach(btn => {
+    btn.classList.toggle("active", btn.dataset.theme === theme);
+  });
+}
+
+(function initTheme(){
+  const saved = localStorage.getItem("theme") || "light";
+  setTheme(saved);
+
+  document.querySelectorAll("[data-theme]").forEach(btn => {
+    btn.addEventListener("click", () => setTheme(btn.dataset.theme));
+  });
+})();
+
+/* Clean */
+function cleanText(text) {
+  return text
+    .replace(/\u00A0/g, " ")
+    .replace(/[\u200B-\u200D\uFEFF]/g, "")
+    .replace(/[“”]/g, '"')
+    .replace(/[‘’]/g, "'")
+    .replace(/[–—]/g, "-")
+    .replace(/[ \t]+/g, " ")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
+}
+
+/* Tone */
+function applyTone(t, tone){
+  if(tone==="concise"){
+    t=t.replace(/\b(that|actually|basically|kind of|sort of)\b/gi,"");
+  }
+  if(tone==="professional"){
+    t=t.replace(/\bgonna\b/gi,"going to");
+  }
+  if(tone==="friendly"){
+    t=t.replace(/\bshould\b/gi,"can");
+  }
+  if(tone==="direct"){
+    t=t.replace(/\bmay be able to\b/gi,"can");
+  }
+  return t.trim();
+}
+
+/* Rewrite */
+function secondDraft(text, tone="natural"){
+  let cleaned = cleanText(text);
+  if(!cleaned) return "";
+
+  let sentences = cleaned.split(/(?<=[.!?])\s+/);
+
+  return sentences.map(s=>{
+    let t=s.trim();
+
+    // remove filler
+    t=t.replace(/^(It is important to note that|In conclusion|With that being said),?\s*/i,"");
+
+    // simplify structure
+    t=t.replace(/plays a .* role in/gi,"helps");
+
+    // vocabulary cleanup
+    t=t.replace(/\b(utilize|leverage)\b/gi,"use");
+
+    // remove fluff
+    t=t.replace(/\b(very|really|extremely)\b/gi,"");
+
+    // tone pass
+    t=applyTone(t,tone);
+
+    return t.replace(/\s{2,}/g," ");
+  }).join(" ").trim();
+}
+
+/* Init SecondDraft */
+(function(){
+  const input=document.getElementById("input");
+  const output=document.getElementById("output");
+  const rewriteBtn=document.getElementById("rewriteBtn");
+  const copyBtn=document.getElementById("copyBtn");
+  const clearBtn=document.getElementById("clearBtn");
+  const tone=document.getElementById("toneMode");
+
+  if(!rewriteBtn || !input || !output) return;
+
+  function runRewrite(){
+    output.value=secondDraft(input.value, tone?.value || "natural");
+  }
+
+  rewriteBtn.addEventListener("click", runRewrite);
+
+  copyBtn?.addEventListener("click", ()=>{
+    navigator.clipboard.writeText(output.value);
+  });
+
+  clearBtn?.addEventListener("click", ()=>{
+    input.value="";
+    output.value="";
+  });
+
+})();// PasteLint v2 — clean, simple script
 
 const body = document.body;
 
