@@ -27,26 +27,49 @@
 
 <section class="hero landing-hero">
   <div class="hero-kicker">SecondDraft by PasteLint · humanize AI writing</div>
+
   <h1>Make AI text sound human.</h1>
 
-  <p class="subtitle">Paste stiff, generic, or overly polished AI writing. SecondDraft rewrites it into text that feels clearer, warmer, and more natural.</p>
-  <p class="subtitle-small">No login. No upload. No backend. Everything runs in your browser.</p>
+  <p class="subtitle">
+    AI-generated text often sounds stiff, generic, or over-polished.
+    Paste it below to make it sound natural and human.
+  </p>
+
+  <p class="subtitle-small">
+    No login. No upload. No backend. Everything runs in your browser.
+  </p>
 
   <div class="hero-actions">
     <a class="btn btn-primary" href="#tool">Make this sound human</a>
     <a class="btn btn-secondary" href="second-draft.html">Open full SecondDraft</a>
   </div>
+
+  <p class="cta-note">
+    Takes a few seconds. Your text is never uploaded or stored.
+  </p>
 </section>
+
+<div class="example-inline" aria-label="AI text before and after example">
+  <p><strong>AI:</strong> It is important to note that this tool plays a crucial role in enhancing readability.</p>
+  <p><strong>Human:</strong> This tool makes your writing easier to read.</p>
+</div>
 
 <main>
 
 <section id="tool" class="tool-shell" aria-label="SecondDraft writing tool">
 
-  <div class="tool-header">
-    <h2>Paste your AI draft</h2>
-    <p>Turn robotic or overly formal writing into something more natural.</p>
-    <p class="micro-note">We keep your meaning. Just make it sound better.</p>
-  </div>
+<div class="tool-header">
+  <h2>Paste your AI draft</h2>
+  <p>Turn robotic or overly formal writing into something more natural.</p>
+
+  <p class="micro-note">We keep your meaning. Just make it sound better.</p>
+
+  <ul class="micro-benefits">
+    <li>Removes filler phrases</li>
+    <li>Simplifies wording</li>
+    <li>Improves flow instantly</li>
+  </ul>
+</div>
 
   <div class="advanced-disclosure">
     <button id="advancedToggle" class="disclosure-toggle" type="button" aria-expanded="false" aria-controls="advancedOptions">
@@ -92,8 +115,7 @@
 
     <div class="textarea-block">
       <label for="input">Original text</label>
-      <textarea id="input" placeholder="Paste ChatGPT text, an AI draft, a LinkedIn post, an email, or any writing that sounds too robotic..."></textarea>
-      <div class="meta">
+      <textarea id="input" placeholder="Paste your AI text here and click “Make this sound human”..."></textarea>      <div class="meta">
         <span id="charCount">0 chars</span>
         <span id="wordCount">0 words</span>
       </div>
