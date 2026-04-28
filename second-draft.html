@@ -3,67 +3,42 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>SecondDraft — Make AI Writing Sound Human</title>
 <meta name="description" content="Rewrite ChatGPT and AI-generated text so it sounds natural, clear, and human. No login. No upload. Everything runs in your browser.">
 <link rel="canonical" href="https://guyt1225.github.io/pastelint/second-draft.html">
-
 <link rel="stylesheet" href="styles.css">
 </head>
-
 <body data-theme="light">
-
 <header class="site-header">
   <div class="header-brand">
     <a href="index.html">PasteLint</a>
   </div>
-
   <div class="theme-toggle" aria-label="Theme selector">
     <button data-theme="light" type="button">Light</button>
     <button data-theme="dark" type="button">Dark</button>
     <button data-theme="terminal" type="button">Terminal</button>
   </div>
 </header>
-
 <section class="hero">
   <div class="hero-kicker">SecondDraft by PasteLint · browser-only writing cleanup</div>
-
   <h1>Make AI writing sound human.</h1>
-
-  <p class="subtitle">
-    Rewrite ChatGPT and AI-generated text so it sounds natural, clear, and human.
-  </p>
-
-  <p class="subtitle-small">
-    No login. No uploads. No backend. Everything runs in your browser.
-  </p>
+  <p class="subtitle">Rewrite ChatGPT and AI-generated text so it sounds natural, clear, and human.</p>
+  <p class="subtitle-small">No login. No uploads. No backend. Everything runs in your browser.</p>
 </section>
-
-<!-- SEO relevance block -->
-<section class="seo-phrases">
-  <h2>Ways people use this tool</h2>
-  <ul>
-    <li>Make ChatGPT text sound more human</li>
-    <li>Rewrite AI writing to sound natural</li>
-    <li>Fix AI-generated content</li>
-    <li>Clean AI text before publishing</li>
-  </ul>
-</section>
-
-</main>
-<section class="tool-shell" aria-label="SecondDraft writing tool">
-
+<main>
+<section id="tool" class="tool-shell" aria-label="SecondDraft writing tool">
   <div class="tool-header">
     <h2>Paste your text</h2>
     <p>We’ll rewrite it to sound more natural.</p>
     <p class="micro-note">We keep your meaning. Just make it sound better.</p>
+    <ul class="micro-benefits">
+      <li>Removes filler phrases</li>
+      <li>Simplifies wording</li>
+      <li>Improves flow instantly</li>
+    </ul>
   </div>
-
   <div class="advanced-disclosure">
-    <button id="advancedToggle" class="disclosure-toggle" type="button" aria-expanded="false" aria-controls="advancedOptions">
-      Advanced options <span>Tone, strength, humanize, view</span>
-    </button>
-
+    <button id="advancedToggle" class="disclosure-toggle" type="button" aria-expanded="false" aria-controls="advancedOptions">Advanced options <span>Tone, strength, humanize, view</span></button>
     <div id="advancedOptions" class="disclosure-content" hidden>
       <div class="mode-panel">
         <div class="control-group">
@@ -76,25 +51,15 @@
             <option value="direct">Direct</option>
           </select>
         </div>
-
         <div class="control-group">
           <label for="rewriteStrength">Rewrite strength</label>
           <input id="rewriteStrength" type="range" min="1" max="3" value="2">
-          <div class="strength-readout">
-            <span>Light</span>
-            <span id="strengthLabel">Balanced</span>
-            <span>Strong</span>
-          </div>
+          <div class="strength-readout"><span>Light</span><span id="strengthLabel">Balanced</span><span>Strong</span></div>
         </div>
-
         <label class="switch-card" for="humanizeMode">
           <input id="humanizeMode" type="checkbox" checked>
-          <span>
-            <strong>Humanize AI writing</strong>
-            <small>Vary rhythm, reduce robotic polish.</small>
-          </span>
+          <span><strong>Humanize AI writing</strong><small>Vary rhythm, reduce robotic polish.</small></span>
         </label>
-
         <div class="control-group">
           <span class="control-label">View</span>
           <div class="segmented-control" role="radiogroup" aria-label="View mode">
@@ -105,53 +70,30 @@
       </div>
     </div>
   </div>
-
   <div class="tool-layout" id="paragraphView">
-
     <div class="textarea-block">
       <label for="input">Original text</label>
       <textarea id="input" placeholder="Paste your AI draft, email, post, event description, or messy copied text here..."></textarea>
-      <div class="meta">
-        <span id="charCount">0 chars</span>
-        <span id="wordCount">0 words</span>
-      </div>
+      <div class="meta"><span id="charCount">0 chars</span><span id="wordCount">0 words</span></div>
     </div>
-
     <div class="textarea-block">
       <label for="output">SecondDraft output</label>
       <textarea id="output" placeholder="Your more natural rewrite will appear here..." readonly></textarea>
-      <div class="meta">
-        <span id="outputCharCount">0 chars</span>
-        <span id="outputWordCount">0 words</span>
-      </div>
-      <p id="reviewNote" class="review-note" hidden>
-        Review for accuracy — we aim to preserve meaning, but always double-check important details.
-      </p>
+      <div class="meta"><span id="outputCharCount">0 chars</span><span id="outputWordCount">0 words</span></div>
+      <p id="reviewNote" class="review-note" hidden>Review for accuracy — we aim to preserve meaning, but always double-check important details.</p>
     </div>
-
   </div>
-
   <div class="line-view" id="lineView" hidden>
-    <div class="line-view-header">
-      <span>Line-by-line rewrite</span>
-      <small>Each non-empty line is rewritten separately.</small>
-    </div>
-    <div id="lineResults" class="line-results">
-      <p class="empty-state">Paste text to see line-by-line rewrites.</p>
-    </div>
+    <div class="line-view-header"><span>Line-by-line rewrite</span><small>Each non-empty line is rewritten separately.</small></div>
+    <div id="lineResults" class="line-results"><p class="empty-state">Paste text to see line-by-line rewrites.</p></div>
   </div>
-
   <div class="tool-actions primary-actions">
     <button id="rewriteBtn" class="btn btn-primary">Make this sound human</button>
     <button id="copyBtn" class="btn btn-secondary">Copy</button>
     <button id="clearBtn" class="btn btn-ghost">Clear</button>
   </div>
-
   <div class="more-options-disclosure">
-    <button id="moreOptionsToggle" class="disclosure-toggle" type="button" aria-expanded="false" aria-controls="moreOptions">
-      More options <span>Clean only or generate alternatives</span>
-    </button>
-
+    <button id="moreOptionsToggle" class="disclosure-toggle" type="button" aria-expanded="false" aria-controls="moreOptions">More options <span>Clean only or generate alternatives</span></button>
     <div id="moreOptions" class="disclosure-content" hidden>
       <div class="secondary-actions">
         <button id="cleanBtn" class="btn btn-secondary">Clean it up</button>
@@ -159,34 +101,21 @@
       </div>
     </div>
   </div>
-
   <div id="outputTools" class="output-tools" hidden>
-    <button id="insightToggle" class="btn btn-secondary" type="button" aria-expanded="false" aria-controls="insightPanel">
-      Why this works
-    </button>
+    <button id="insightToggle" class="btn btn-secondary" type="button" aria-expanded="false" aria-controls="insightPanel">Why this works</button>
   </div>
-
   <div class="quick-actions" aria-label="Quick output actions" hidden>
     <button data-action="shorter" type="button">Make it shorter</button>
     <button data-action="clearer" type="button">Make it clearer</button>
     <button data-action="simpler" type="button">Simplify language</button>
   </div>
-
-  <div id="insightPanel" class="insight-panel" hidden>
-    <h3>Why this rewrite works</h3>
-    <ul id="changeList" class="change-list"></ul>
-  </div>
-
+  <div id="insightPanel" class="insight-panel" hidden><h3>Why this rewrite works</h3><ul id="changeList" class="change-list"></ul></div>
   <div id="versionsPanel" class="versions-panel" hidden></div>
-
 </section>
-
 <section class="info">
   <div class="info-card">
     <h2>What SecondDraft does</h2>
-    <p>
-      SecondDraft takes text that feels overly polished, repetitive, vague, or robotic and rewrites it into something clearer and more natural.
-    </p>
+    <p>SecondDraft takes text that feels overly polished, repetitive, vague, or robotic and rewrites it into something clearer and more natural.</p>
     <ul>
       <li>Removes filler phrases</li>
       <li>Simplifies inflated wording</li>
@@ -196,25 +125,26 @@
       <li>Keeps your original meaning intact</li>
     </ul>
   </div>
-
   <div class="info-card">
-    <h3>Privacy-first by design</h3>
-    <p>
-      This version runs entirely in your browser. Your text is not uploaded, stored, or sent to an AI service.
-    </p>
-    <p>
-      That makes it useful for quick drafts, public-facing copy, library text, IVR scripts, internal notes, and anything you want to clean before sharing.
-    </p>
+    <h3>Why this is different</h3>
+    <p>Most AI humanizer tools either barely change the text or change it too much. SecondDraft aims for the useful middle: clean, natural wording without fake typos, strange phrasing, or meaning drift.</p>
+    <p>It is useful for emails, posts, website copy, library text, IVR scripts, internal notes, and anything you want to clean before sharing.</p>
   </div>
 </section>
-
+<section class="seo-phrases">
+  <h2>Ways people use this tool</h2>
+  <ul>
+    <li>Make ChatGPT text sound more human</li>
+    <li>Rewrite AI writing to sound natural</li>
+    <li>Fix AI-generated content</li>
+    <li>Clean AI text before publishing</li>
+  </ul>
+</section>
 </main>
-
 <footer class="site-footer">
   <div class="footer-inner">
     <p class="footer-brand">PasteLint — free browser-based text tools.</p>
     <p class="footer-note">No login. No upload. Everything runs in your browser.</p>
-
     <div class="footer-columns">
       <div>
         <h4>Related tools</h4>
@@ -228,7 +158,6 @@
           <a href="fix-text-from-pdf.html">Fix text from PDF</a>
         </p>
       </div>
-
       <div>
         <h4>Legal</h4>
         <p>
@@ -242,7 +171,6 @@
     </div>
   </div>
 </footer>
-
 <script src="scripts.js"></script>
 </body>
 </html>
