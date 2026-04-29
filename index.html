@@ -8,298 +8,70 @@
 <link rel="canonical" href="https://guyt1225.github.io/pastelint/">
 <link rel="stylesheet" href="styles.css">
 </head>
+
 <body data-theme="light">
+
 <header class="site-header">
   <div class="header-brand"><a href="index.html">PasteLint</a></div>
-  <div class="theme-toggle" aria-label="Theme selector">
-    <button data-theme="light" type="button">Light</button>
-    <button data-theme="dark" type="button">Dark</button>
-    <button data-theme="terminal" type="button">Terminal</button>
+
+  <div class="theme-toggle">
+    <button data-theme="light">Light</button>
+    <button data-theme="dark">Dark</button>
+    <button data-theme="terminal">Terminal</button>
   </div>
 </header>
+
 <section class="hero">
-  <div class="hero-kicker">Privacy-first text cleanup · browser-only</div>
   <h1>Fix messy text instantly.</h1>
-  <p class="subtitle">Paste text from PDFs, Word, websites, or AI tools. PasteLint cleans it up so it is easier to read, reuse, publish, or send.</p>
-  <p class="subtitle-small">No login. No uploads. Everything runs in your browser.</p>
-  <div class="hero-actions">
-    <a class="btn btn-primary" href="#tool">Clean Text</a>
-    <a class="btn btn-secondary" href="second-draft.html">Try SecondDraft</a>
-  </div>
-  <p class="cta-note">Your text stays on your device.</p>
+  <p>Paste text from PDFs, Word, websites, or AI tools. Clean it up instantly.</p>
 </section>
+
 <main>
-<section id="tool" class="tool-shell basic-cleaner" aria-label="PasteLint basic text cleaner">
-  <div class="tool-header">
-    <h2>Clean your text</h2>
-    <p>Paste messy text. Get clean output.</p>
-    <p class="micro-note">Clean spacing, normalize punctuation, and remove hidden characters.</p>
-  </div>
+
+<section id="tool" class="tool-shell">
+
   <div class="tool-layout">
+
     <div class="textarea-block">
-      <label for="input">Original text</label>
-      <textarea id="input" placeholder="Paste messy text here..."></textarea>
-      <div class="meta"><span id="charCount">0 chars</span><span id="wordCount">0 words</span></div>
+      <label>Original text</label>
+      <textarea id="input"></textarea>
     </div>
+
     <div class="textarea-block">
-      <label for="output">Clean output</label>
-      <textarea id="output" placeholder="Clean text will appear here..." readonly></textarea>
-      <div class="meta"><span id="outputCharCount">0 chars</span><span id="outputWordCount">0 words</span></div>
+      <label>Clean output</label>
+      <textarea id="output" readonly></textarea>
     </div>
+
   </div>
+
   <div class="tool-actions">
-    <button id="cleanBtn" class="btn btn-primary">Clean</button>
-    <button id="copyBtn" class="btn btn-secondary">Copy</button>
-    <button id="clearBtn" class="btn btn-ghost">Clear</button>
-  </div>
-  <section id="diffPanel" class="diff-panel" hidden>
-    <div class="diff-header">
-      <div>
-        <h3>What PasteLint changed</h3>
-        <p>Review cleanup changes before copying.</p>
-      </div>
-      <span id="diffStatus" class="diff-status">Ready</span>
-    </div>
-    <div id="diffSummary" class="diff-summary"></div>
-    <div id="issueList" class="issue-list"></div>
-    <div id="diffOutput" class="diff-output" aria-live="polite"></div>
-  </section>
-</section>
-<section class="entry-section">
-  <div class="section-heading">
-    <h2>Or start with a specific problem</h2>
-    <p>Choose the closest match and PasteLint will guide the cleanup.</p>
-  </div>
-  <div class="tool-grid">
-    <a href="second-draft.html" class="tool-card"><h3>SecondDraft</h3><p>Make AI writing sound natural.</p></a>
-    <a href="make-ai-text-sound-human.html" class="tool-card"><h3>Make AI text sound human</h3><p>Fix robotic AI writing instantly.</p></a>
-    <a href="clean-chatgpt-output.html" class="tool-card"><h3>Clean ChatGPT output</h3><p>Remove filler and simplify text.</p></a>
-    <a href="fix-text-from-pdf.html" class="tool-card"><h3>Fix PDF text</h3><p>Clean broken lines and spacing.</p></a>
-  </div>
-</section>
-<section class="positioning-panel">
-  <h2>What is PasteLint for?</h2>
-  <p>PasteLint helps people turn messy, robotic, or hard-to-use text into clean, readable text they can publish, send, or reuse.</p>
-  <p>SecondDraft is for AI drafts that need to sound natural without adding fake typos, weird rewrites, or sending your text to a server.</p>
-</section>
-<section class="explain-section">
-  <h2>Why some AI writing feels off</h2>
-  <p>AI writing doesn’t just feel off because of word choice. It’s often about patterns — predictable phrasing, repetitive structure, and flat sentence rhythm.</p>
-  <p>Most tools try to “rewrite everything.” That often makes things worse.</p>
-  <p>PasteLint focuses on something simpler: improving flow, removing filler, and making text read more naturally — without overprocessing it.</p>
-</section>
-<section class="trust">
-  <h2>Private by design</h2>
-  <p>Your text never leaves your device. PasteLint is built as a static, browser-based utility.</p>
-</section>
-</main>
-<footer class="site-footer">
-  <div class="footer-inner">
-    <p class="footer-brand">PasteLint — free browser-based text tools.</p>
-    <p class="footer-note">No login. No upload. Everything runs in your browser.</p>
-  </div>
-</footer>
-<script src="script.js"></script>
-</body>
-</html><!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PasteLint — Fix Messy Text Instantly</title>
-<meta name="description" content="Fix messy text from PDFs, Word, websites, and AI tools. Clean, readable output in seconds. No login. No upload.">
-<link rel="canonical" href="https://guyt1225.github.io/pastelint/">
-<link rel="stylesheet" href="styles.css">
-</head>
-<body data-theme="light">
-<header class="site-header">
-  <div class="header-brand"><a href="index.html">PasteLint</a></div>
-  <div class="theme-toggle" aria-label="Theme selector">
-    <button data-theme="light" type="button">Light</button>
-    <button data-theme="dark" type="button">Dark</button>
-    <button data-theme="terminal" type="button">Terminal</button>
-  </div>
-</header>
-<section class="hero">
-  <div class="hero-kicker">Privacy-first text cleanup · browser-only</div>
-  <h1>Fix messy text instantly.</h1>
-  <p class="subtitle">Paste text from PDFs, Word, websites, or AI tools. PasteLint cleans it up so it is easier to read, reuse, publish, or send.</p>
-  <p class="subtitle-small">No login. No uploads. Everything runs in your browser.</p>
-  <div class="hero-actions">
-    <a class="btn btn-primary" href="#tool">Clean Text</a>
-    <a class="btn btn-secondary" href="second-draft.html">Try SecondDraft</a>
-  </div>
-  <p class="cta-note">Your text stays on your device.</p>
-</section>
-<main>
-<section id="tool" class="tool-shell basic-cleaner" aria-label="PasteLint basic text cleaner">
-  <div class="tool-header">
-    <h2>Clean your text</h2>
-    <p>Paste messy text. Get clean output.</p>
-    <p class="micro-note">Clean spacing, normalize punctuation, and remove hidden characters.</p>
-  </div>
-  <div class="tool-layout">
-    <div class="textarea-block">
-      <label for="input">Original text</label>
-      <textarea id="input" placeholder="Paste messy text here..."></textarea>
-      <div class="meta"><span id="charCount">0 chars</span><span id="wordCount">0 words</span></div>
-    </div>
-    <div class="textarea-block">
-      <label for="output">Clean output</label>
-      <textarea id="output" placeholder="Clean text will appear here..." readonly></textarea>
-      <div class="meta"><span id="outputCharCount">0 chars</span><span id="outputWordCount">0 words</span></div>
-    </div>
-  </div>
-  <div class="tool-actions">
-    <button id="cleanBtn" class="btn btn-primary">Clean</button>
-    <button id="copyBtn" class="btn btn-secondary">Copy</button>
-    <button id="clearBtn" class="btn btn-ghost">Clear</button>
-  </div>
-  <section id="diffPanel" class="diff-panel" hidden>
-    <div class="diff-header">
-      <div>
-        <h3>What PasteLint changed</h3>
-        <p>Review cleanup changes before copying.</p>
-      </div>
-      <div id="diffSummary" class="diff-summary"></div>
-    </div>
-    <div id="issueList" class="issue-list"></div>
-    <div id="diffOutput" class="diff-output" aria-live="polite"></div>
-  </section>
-
-</section>
-<section class="entry-section">
-  <div class="section-heading">
-    <h2>Or start with a specific problem</h2>
-    <p>Choose the closest match and PasteLint will guide the cleanup.</p>
-  </div>
-  <div class="tool-grid">
-    <a href="second-draft.html" class="tool-card"><h3>SecondDraft</h3><p>Make AI writing sound natural.</p></a>
-    <a href="make-ai-text-sound-human.html" class="tool-card"><h3>Make AI text sound human</h3><p>Fix robotic AI writing instantly.</p></a>
-    <a href="clean-chatgpt-output.html" class="tool-card"><h3>Clean ChatGPT output</h3><p>Remove filler and simplify text.</p></a>
-    <a href="fix-text-from-pdf.html" class="tool-card"><h3>Fix PDF text</h3><p>Clean broken lines and spacing.</p></a>
-  </div>
-</section>
-<section class="positioning-panel">
-  <h2>What is PasteLint for?</h2>
-  <p>PasteLint helps people turn messy, robotic, or hard-to-use text into clean, readable text they can publish, send, or reuse.</p>
-  <p>SecondDraft is for AI drafts that need to sound natural without adding fake typos, weird rewrites, or sending your text to a server.</p>
-</section>
-<section class="explain-section">
-  <h2>Why some AI writing feels off</h2>
-  <p>AI writing doesn’t just feel off because of word choice. It’s often about patterns — predictable phrasing, repetitive structure, and flat sentence rhythm.</p>
-  <p>Most tools try to “rewrite everything.” That often makes things worse.</p>
-  <p>PasteLint focuses on something simpler: improving flow, removing filler, and making text read more naturally — without overprocessing it.</p>
-</section>
-<section class="trust">
-  <h2>Private by design</h2>
-  <p>Your text never leaves your device. PasteLint is built as a static, browser-based utility.</p>
-</section>
-</main>
-<footer class="site-footer">
-  <div class="footer-inner">
-    <p class="footer-brand">PasteLint — free browser-based text tools.</p>
-    <p class="footer-note">No login. No upload. Everything runs in your browser.</p>
-  </div>
-</footer>
-<script src="script.js"></script>
-</body>
-</html>
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>PasteLint — Clean Text for Everybody</title>
-<meta name="description" content="Clean messy text instantly. Fix formatting, remove hidden characters, and make text usable — all in your browser.">
-
-<link rel="stylesheet" href="styles.css">
-</head>
-
-<body>
-
-<header class="header">
-  <h1>PasteLint</h1>
-  <p>Clean messy text instantly — no login, no upload, everything in your browser.</p>
-</header>
-
-<main class="container">
-
-  <!-- INPUT -->
-  <textarea id="input" placeholder="Paste messy text from PDFs, ChatGPT, emails, websites..."></textarea>
-
-  <!-- BUTTONS -->
-  <div class="actions">
-    <button id="cleanBtn">Clean text</button>
+    <button id="cleanBtn">Clean</button>
     <button id="copyBtn">Copy</button>
     <button id="clearBtn">Clear</button>
   </div>
 
-  <!-- OUTPUT -->
-  <textarea id="output" placeholder="Cleaned text will appear here..." readonly></textarea>
-
-  <!-- 🔥 DIFF PANEL (NEW) -->
+  <!-- TRANSPARENCY PANEL -->
   <section id="diffPanel" class="diff-panel" hidden>
 
     <div class="diff-header">
       <h3>What PasteLint changed</h3>
-      <p>Review cleanup before copying</p>
     </div>
 
     <div id="diffSummary" class="diff-summary"></div>
-
+    <div id="issueList" class="issue-list"></div>
     <div id="diffOutput" class="diff-output"></div>
 
   </section>
 
-</main>
-
-<script src="script.js"></script>
-</body>
-</html><!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PasteLint — Clean Text for Everybody</title>
-<link rel="stylesheet" href="styles.css">
-</head>
-
-<body data-theme="light">
-
-<header class="header">
-  <h1>PasteLint</h1>
-  <p>Clean messy text instantly — no login, no upload, everything in your browser.</p>
-</header>
-
-<main class="container">
-
-  <!-- INPUT -->
-  <textarea id="input" placeholder="Paste messy text from PDFs, ChatGPT, emails, websites..."></textarea>
-
-  <!-- ACTIONS -->
-  <div class="actions">
-    <button id="cleanBtn">Clean text</button>
-    <button id="copyBtn">Copy</button>
-    <button id="clearBtn">Clear</button>
-  </div>
-
-  <!-- OUTPUT -->
-  <textarea id="output" placeholder="Cleaned text will appear here..." readonly></textarea>
-
-  <!-- WHAT CHANGED PANEL -->
-  <section id="diffPanel" class="diff-panel" hidden>
-    <h3>What PasteLint changed</h3>
-    <p class="diff-sub">Review cleanup before copying</p>
-
-    <div id="diffSummary" class="diff-summary"></div>
-
-    <div id="diffOutput" class="diff-output"></div>
-  </section>
+</section>
 
 </main>
 
+<footer class="site-footer">
+  <p>PasteLint — browser-only text tools.</p>
+</footer>
+
 <script src="script.js"></script>
+
 </body>
 </html>
