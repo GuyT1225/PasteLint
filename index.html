@@ -3,6 +3,58 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>PasteLint — Clean Text for Everybody</title>
+<meta name="description" content="Clean messy text instantly. Fix formatting, remove hidden characters, and make text usable — all in your browser.">
+
+<link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+<header class="header">
+  <h1>PasteLint</h1>
+  <p>Clean messy text instantly — no login, no upload, everything in your browser.</p>
+</header>
+
+<main class="container">
+
+  <!-- INPUT -->
+  <textarea id="input" placeholder="Paste messy text from PDFs, ChatGPT, emails, websites..."></textarea>
+
+  <!-- BUTTONS -->
+  <div class="actions">
+    <button id="cleanBtn">Clean text</button>
+    <button id="copyBtn">Copy</button>
+    <button id="clearBtn">Clear</button>
+  </div>
+
+  <!-- OUTPUT -->
+  <textarea id="output" placeholder="Cleaned text will appear here..." readonly></textarea>
+
+  <!-- 🔥 DIFF PANEL (NEW) -->
+  <section id="diffPanel" class="diff-panel" hidden>
+
+    <div class="diff-header">
+      <h3>What PasteLint changed</h3>
+      <p>Review cleanup before copying</p>
+    </div>
+
+    <div id="diffSummary" class="diff-summary"></div>
+
+    <div id="diffOutput" class="diff-output"></div>
+
+  </section>
+
+</main>
+
+<script src="script.js"></script>
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PasteLint — Clean Text for Everybody</title>
 <link rel="stylesheet" href="styles.css">
 </head>
