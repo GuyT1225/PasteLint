@@ -334,8 +334,8 @@ function cleanText(text, mode = "paragraph") {
       impact.punctuation && "Fixed punctuation spacing",
       impact.typos && `Fixed ${impact.typos} common typo${impact.typos === 1 ? "" : "s"}`,
       impact.repeatedWords && `Removed ${impact.repeatedWords} repeated word${impact.repeatedWords === 1 ? "" : "s"}`,
-      mode === "line" && "Cleaned text line by line",
-      mode === "paragraph" && "Cleaned text as paragraphs"
+      mode === "line" && "Flattened text into clean single lines",
+      mode === "paragraph" && "Grouped text into readable paragraphs"
     ].filter(Boolean)
   };
 }
