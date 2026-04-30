@@ -391,9 +391,15 @@ function applyTone(text, tone) {
 
 function applyVersion(text, version) {
   if (version === "light") {
+    return text;
+  }
+
+  if (version === "balanced") {
     return text
-      .replace(/\bkind of\b/gi, "somewhat")
-      .replace(/\bsort of\b/gi, "somewhat");
+      .replace(/\bvery\s+/gi, "")
+      .replace(/\breally\s+/gi, "")
+      .replace(/\bin many different ways\b/gi, "in many ways")
+      .replace(/\ba number of\b/gi, "several");
   }
 
   if (version === "strong") {
@@ -405,8 +411,14 @@ function applyVersion(text, version) {
       .replace(/\bjust\s+/gi, "")
       .replace(/\bvery\s+/gi, "")
       .replace(/\breally\s+/gi, "")
-      .replace(/\boverall\s+/gi, "");
+      .replace(/\bin order to\b/gi, "to")
+      .replace(/\bdue to the fact that\b/gi, "because")
+      .replace(/\bit is important to note that\b/gi, "")
+      .replace(/\bat this point in time\b/gi, "now");
   }
+
+  return text;
+}
 
   return text
     .replace(/\bvery\s+/gi, "")
