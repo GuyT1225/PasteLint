@@ -15,14 +15,15 @@ function $(...ids) {
   }
   return null;
 }
-
 function getElements() {
   return {
-    input: $("input"),
-    output: $("output"),
+    input: $("inputText", "input"),
+    output: $("outputText", "output"),
 
     cleanBtn: $("cleanBtn"),
-    rewriteBtn: $("rewriteBtn"),
+    rewriteBtn: $("improveBtn", "rewriteBtn"),
+    versionsBtn: $("versionsBtn"),
+
     copyBtn: $("copyBtn"),
     clearBtn: $("clearBtn"),
 
@@ -33,16 +34,21 @@ function getElements() {
 
     modeToggle: $("modeToggle"),
 
-    issuePanel: $("issuePanel"),
-    impactPanel: $("impactPanel"),
-    changeSummary: $("changeSummary"),
+    // INSIGHTS (aligned to your HTML)
+    issuePanel: $("analysisList"),
+    impactPanel: $("impactList"),
+    changeSummary: $("improvementList"),
 
-    version1: $("version1"),
-    version2: $("version2"),
-    version3: $("version3")
+    // CHANGE PREVIEW (future use)
+    changePreview: $("changePreview"),
+
+    // VERSIONS
+    versionsPanel: $("versionsPanel"),
+    version1: $("versionConcise"),
+    version2: $("versionNatural"),
+    version3: $("versionDirect")
   };
 }
-
 /* -----------------------------
    EVENTS
 ----------------------------- */
@@ -57,6 +63,14 @@ function bindEvents(els) {
   els.rewriteBtn?.addEventListener("click", () => handleRewrite(els));
   els.copyBtn?.addEventListener("click", () => copyOutput(els));
   els.clearBtn?.addEventListener("click", () => clearAll(els));
+
+  els.versionsBtn?.addEventListener("click", () => {
+    handleRewrite(els);
+
+    if (els.versionsPanel) {
+      els.versionsPanel.classList.remove("hidden");
+    }
+  });
 }
 
 /* -----------------------------
