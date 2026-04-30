@@ -83,9 +83,19 @@
     <div class="textarea-block">
       <label for="output">Clean output</label>
       <textarea id="output" placeholder="Clean text will appear here..." readonly></textarea>
+
       <div class="meta">
         <span id="outputCharCount">0 chars</span>
         <span id="outputWordCount">0 words</span>
+      </div>
+
+      <div id="highlightPreview" class="highlight-preview" hidden>
+        <div class="highlight-preview-header">
+          <strong>Visual cleanup preview</strong>
+          <span>Green shows cleaned or normalized text</span>
+        </div>
+
+        <div id="highlightOutput" class="highlight-output"></div>
       </div>
     </div>
   </div>
