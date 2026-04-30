@@ -64,7 +64,6 @@ document.addEventListener("DOMContentLoaded", () => {
       .trim();
 
     cleaned = removeDuplicateQuoteEchoes(cleaned);
-
     return cleaned;
   }
 
@@ -92,7 +91,6 @@ document.addEventListener("DOMContentLoaded", () => {
   function updateFoundPanel(text) {
     const foundPanel = $("foundPanel");
     const foundList = $("foundList");
-
     if (!foundPanel || !foundList) return;
 
     const issues = detectIssues(text);
@@ -192,6 +190,36 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     return cards;
+  }
+
+  function renderHighlightPreview(original, cleaned) {
+    const preview = $("highlightPreview");
+    const target = $("highlightOutput");
+
+    if (!preview || !target) return;
+
+    target.innerHTML = "";
+
+    if (!cleaned.trim()) {
+      preview.hidden = true;
+      return;
+    }
+
+    const originalTokens = (original || "").split(/(\s+)/);
+    const cleanedTokens = (cleaned || "").split(/(\s+)/);
+
+    cleanedTokens.forEach((token, index) => {
+      const span = document.createElement("span");
+      span.textContent = token;
+
+      if (token.trim() && token !== originalTokens[index]) {
+        span.className = "highlight-added";
+      }
+
+      target.appendChild(span);
+    });
+
+    preview.hidden = false;
   }
 
   function renderTransparency(original, cleaned) {
@@ -298,6 +326,7 @@ document.addEventListener("DOMContentLoaded", () => {
     updateFoundPanel(original);
     updateBrief(cleaned);
     renderTransparency(original, cleaned);
+    renderHighlightPreview(original, cleaned);
   });
 
   input?.addEventListener("input", () => {
@@ -308,6 +337,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!input.value.trim()) {
       if ($("foundPanel")) $("foundPanel").hidden = true;
       if ($("textBrief")) $("textBrief").hidden = true;
+      if ($("highlightPreview")) $("highlightPreview").hidden = true;
+      if ($("highlightOutput")) $("highlightOutput").innerHTML = "";
     }
   });
 
@@ -334,6 +365,8 @@ document.addEventListener("DOMContentLoaded", () => {
     if ($("diffPanel")) $("diffPanel").hidden = true;
     if ($("foundPanel")) $("foundPanel").hidden = true;
     if ($("textBrief")) $("textBrief").hidden = true;
+    if ($("highlightPreview")) $("highlightPreview").hidden = true;
+    if ($("highlightOutput")) $("highlightOutput").innerHTML = "";
 
     updateCounts();
   });
