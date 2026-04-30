@@ -1,6 +1,8 @@
 document.addEventListener("DOMContentLoaded", () => {
   const els = getElements();
+
   bindEvents(els);
+  bindThemeButtons();
   updateCounters(els);
 });
 
@@ -15,6 +17,7 @@ function $(...ids) {
   }
   return null;
 }
+
 function getElements() {
   return {
     input: $("inputText", "input"),
@@ -34,21 +37,18 @@ function getElements() {
 
     modeToggle: $("modeToggle"),
 
-    // INSIGHTS (aligned to your HTML)
     issuePanel: $("analysisList"),
     impactPanel: $("impactList"),
     changeSummary: $("improvementList"),
-
-    // CHANGE PREVIEW (future use)
     changePreview: $("changePreview"),
 
-    // VERSIONS
     versionsPanel: $("versionsPanel"),
     version1: $("versionConcise"),
     version2: $("versionNatural"),
     version3: $("versionDirect")
   };
 }
+
 /* -----------------------------
    EVENTS
 ----------------------------- */
@@ -70,6 +70,33 @@ function bindEvents(els) {
     if (els.versionsPanel) {
       els.versionsPanel.classList.remove("hidden");
     }
+  });
+}
+
+/* -----------------------------
+   THEME SWITCHER
+----------------------------- */
+
+function bindThemeButtons() {
+  const themeButtons = document.querySelectorAll("[data-theme-choice]");
+  const savedTheme = localStorage.getItem("pastelint-theme") || "light";
+
+  applyTheme(savedTheme);
+
+  themeButtons.forEach(button => {
+    button.addEventListener("click", () => {
+      const theme = button.dataset.themeChoice;
+      applyTheme(theme);
+      localStorage.setItem("pastelint-theme", theme);
+    });
+  });
+}
+
+function applyTheme(theme) {
+  document.documentElement.setAttribute("data-theme", theme);
+
+  document.querySelectorAll("[data-theme-choice]").forEach(button => {
+    button.classList.toggle("active", button.dataset.themeChoice === theme);
   });
 }
 
@@ -155,6 +182,10 @@ function fixRepeatedWords(text) {
   return { text: fixed, count, edits };
 }
 
+function capitalize(text) {
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
 /* -----------------------------
    PRE-ANALYSIS
 ----------------------------- */
@@ -163,16 +194,16 @@ function runPreAnalysis(els) {
   const text = getInputText(els);
 
   if (!text) {
-    if (els.issuePanel) els.issuePanel.textContent = "";
+    if (els.issuePanel) els.issuePanel.innerHTML = "<li>Paste text to see a quick readability check.</li>";
     return;
   }
 
   const issues = detectIssues(text);
 
   if (els.issuePanel) {
-    els.issuePanel.textContent = issues.length
-      ? issues.map(issue => `• ${issue}`).join("\n")
-      : "No obvious issues detected";
+    els.issuePanel.innerHTML = issues.length
+      ? issues.map(issue => `<li>${escapeHTML(issue)}</li>`).join("")
+      : "<li>No obvious issues detected.</li>";
   }
 }
 
@@ -226,10 +257,10 @@ function handleClean(els) {
   const result = cleanText(raw, mode);
 
   setOutput(els, result.text);
-renderImpact(els, result.impact);
-renderChanges(els, result.changes);
-renderEditPreview(els, result.edits);
-updateCounters(els);
+  renderImpact(els, result.impact);
+  renderChanges(els, result.changes);
+  renderEditPreview(els, result.edits);
+  updateCounters(els);
 }
 
 /* -----------------------------
@@ -246,6 +277,7 @@ function handleRewrite(els) {
   renderVersions(els, versions);
   renderImpact(els, versions[0].impact);
   renderChanges(els, versions[0].changes);
+  renderEditPreview(els, []);
   updateCounters(els);
 }
 
@@ -256,6 +288,7 @@ function handleRewrite(els) {
 function cleanText(text, mode = "paragraph") {
   let cleaned = text;
   const edits = [];
+
   const impact = {
     spaces: 0,
     lines: 0,
@@ -279,23 +312,23 @@ function cleanText(text, mode = "paragraph") {
     return punctuation;
   });
 
-const typoResult = fixCommonTypos(cleaned);
-cleaned = typoResult.text;
-impact.typos = typoResult.count;
-edits.push(...typoResult.edits);
+  const typoResult = fixCommonTypos(cleaned);
+  cleaned = typoResult.text;
+  impact.typos = typoResult.count;
+  edits.push(...typoResult.edits);
 
-const repeatedWordResult = fixRepeatedWords(cleaned);
-cleaned = repeatedWordResult.text;
-impact.repeatedWords = repeatedWordResult.count;
-edits.push(...repeatedWordResult.edits);
+  const repeatedWordResult = fixRepeatedWords(cleaned);
+  cleaned = repeatedWordResult.text;
+  impact.repeatedWords = repeatedWordResult.count;
+  edits.push(...repeatedWordResult.edits);
 
   cleaned = applyCleanMode(cleaned, mode);
 
-return {
-  text: cleaned.trim(),
-  impact,
-  edits,
-  changes: [
+  return {
+    text: cleaned.trim(),
+    impact,
+    edits,
+    changes: [
       impact.spaces && "Collapsed extra spaces",
       impact.lines && "Reduced excessive line breaks",
       impact.punctuation && "Fixed punctuation spacing",
@@ -385,7 +418,9 @@ function buildResult(label, original, revised) {
   return {
     label,
     text: cleanedRevised,
-    changes: original !== cleanedRevised ? [`Created ${label.toLowerCase()} version`] : ["No major rewrite needed"],
+    changes: original !== cleanedRevised
+      ? [`Created ${label.toLowerCase()} version`]
+      : ["No major rewrite needed"],
     impact
   };
 }
@@ -411,17 +446,9 @@ function renderImpact(els, impact) {
     parts.push(`Shortened by ${impact.shortened} characters`);
   }
 
-  if (impact.spaces) {
-    parts.push("Removed extra spaces");
-  }
-
-  if (impact.lines) {
-    parts.push("Reduced line breaks");
-  }
-
-  if (impact.punctuation) {
-    parts.push("Fixed punctuation spacing");
-  }
+  if (impact.spaces) parts.push("Removed extra spaces");
+  if (impact.lines) parts.push("Reduced line breaks");
+  if (impact.punctuation) parts.push("Fixed punctuation spacing");
 
   if (impact.typos) {
     parts.push(`Fixed ${impact.typos} common typo${impact.typos === 1 ? "" : "s"}`);
@@ -431,15 +458,17 @@ function renderImpact(els, impact) {
     parts.push(`Removed ${impact.repeatedWords} repeated word${impact.repeatedWords === 1 ? "" : "s"}`);
   }
 
-  els.impactPanel.textContent = parts.join(" • ") || "No major changes";
+  els.impactPanel.innerHTML = parts.length
+    ? parts.map(part => `<li>${escapeHTML(part)}</li>`).join("")
+    : "<li>No major changes.</li>";
 }
 
 function renderChanges(els, changes) {
   if (!els.changeSummary) return;
 
-  els.changeSummary.textContent = changes && changes.length
-    ? changes.join(" • ")
-    : "No major cleanup needed";
+  els.changeSummary.innerHTML = changes && changes.length
+    ? changes.map(change => `<li>${escapeHTML(change)}</li>`).join("")
+    : "<li>No major cleanup needed.</li>";
 }
 
 function renderEditPreview(els, edits) {
@@ -462,6 +491,7 @@ function renderEditPreview(els, edits) {
     })
     .join("");
 }
+
 /* -----------------------------
    VERSIONS
 ----------------------------- */
@@ -471,7 +501,7 @@ function renderVersions(els, versions) {
 
   versions.forEach((version, index) => {
     if (targets[index]) {
-      targets[index].textContent = `${version.label}\n\n${version.text}`;
+      targets[index].textContent = version.text;
     }
   });
 }
@@ -513,16 +543,29 @@ function clearAll(els) {
 
   updateCounters(els);
 
-  if (els.issuePanel) els.issuePanel.textContent = "";
-  if (els.impactPanel) els.impactPanel.textContent = "";
-  if (els.changeSummary) els.changeSummary.textContent = "";
+  if (els.issuePanel) {
+    els.issuePanel.innerHTML = "<li>Paste text to see a quick readability check.</li>";
+  }
+
+  if (els.impactPanel) {
+    els.impactPanel.innerHTML = "<li>No changes yet.</li>";
+  }
+
+  if (els.changeSummary) {
+    els.changeSummary.innerHTML = "<li>No improvements yet.</li>";
+  }
 
   if (els.version1) els.version1.textContent = "";
   if (els.version2) els.version2.textContent = "";
   if (els.version3) els.version3.textContent = "";
+
+  if (els.versionsPanel) {
+    els.versionsPanel.classList.add("hidden");
+  }
+
   if (els.changePreview) {
-  els.changePreview.textContent =
-    "Paste text and click Clean Text or Create SecondDraft to see visible changes.";
+    els.changePreview.textContent =
+      "Paste text and click Clean Text or Create SecondDraft to see visible changes.";
   }
 }
 
@@ -567,5 +610,4 @@ function escapeHTML(text) {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
-
 }
