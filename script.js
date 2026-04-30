@@ -106,6 +106,7 @@ const COMMON_TYPOS = {
 
 function fixCommonTypos(text) {
   let count = 0;
+  const edits = [];
 
   const fixed = text.replace(/\b[A-Za-z']+\b/g, word => {
     const lower = word.toLowerCase();
@@ -115,33 +116,43 @@ function fixCommonTypos(text) {
 
     count++;
 
+    let finalReplacement = replacement;
+
     if (word === word.toUpperCase()) {
-      return replacement.toUpperCase();
+      finalReplacement = replacement.toUpperCase();
+    } else if (word[0] === word[0].toUpperCase()) {
+      finalReplacement = capitalize(replacement);
     }
 
-    if (word[0] === word[0].toUpperCase()) {
-      return capitalize(replacement);
-    }
+    edits.push({
+      type: "typo",
+      before: word,
+      after: finalReplacement
+    });
 
-    return replacement;
+    return finalReplacement;
   });
 
-  return { text: fixed, count };
+  return { text: fixed, count, edits };
 }
 
 function fixRepeatedWords(text) {
   let count = 0;
+  const edits = [];
 
   const fixed = text.replace(/\b(\w+)\s+\1\b/gi, (match, word) => {
     count++;
+
+    edits.push({
+      type: "repeat",
+      before: match,
+      after: word
+    });
+
     return word;
   });
 
-  return { text: fixed, count };
-}
-
-function capitalize(text) {
-  return text.charAt(0).toUpperCase() + text.slice(1);
+  return { text: fixed, count, edits };
 }
 
 /* -----------------------------
@@ -215,9 +226,10 @@ function handleClean(els) {
   const result = cleanText(raw, mode);
 
   setOutput(els, result.text);
-  renderImpact(els, result.impact);
-  renderChanges(els, result.changes);
-  updateCounters(els);
+renderImpact(els, result.impact);
+renderChanges(els, result.changes);
+renderEditPreview(els, result.edits);
+updateCounters(els);
 }
 
 /* -----------------------------
@@ -243,7 +255,7 @@ function handleRewrite(els) {
 
 function cleanText(text, mode = "paragraph") {
   let cleaned = text;
-
+  const edits = [];
   const impact = {
     spaces: 0,
     lines: 0,
@@ -267,20 +279,23 @@ function cleanText(text, mode = "paragraph") {
     return punctuation;
   });
 
-  const typoResult = fixCommonTypos(cleaned);
-  cleaned = typoResult.text;
-  impact.typos = typoResult.count;
+const typoResult = fixCommonTypos(cleaned);
+cleaned = typoResult.text;
+impact.typos = typoResult.count;
+edits.push(...typoResult.edits);
 
-  const repeatedWordResult = fixRepeatedWords(cleaned);
-  cleaned = repeatedWordResult.text;
-  impact.repeatedWords = repeatedWordResult.count;
+const repeatedWordResult = fixRepeatedWords(cleaned);
+cleaned = repeatedWordResult.text;
+impact.repeatedWords = repeatedWordResult.count;
+edits.push(...repeatedWordResult.edits);
 
   cleaned = applyCleanMode(cleaned, mode);
 
-  return {
-    text: cleaned.trim(),
-    impact,
-    changes: [
+return {
+  text: cleaned.trim(),
+  impact,
+  edits,
+  changes: [
       impact.spaces && "Collapsed extra spaces",
       impact.lines && "Reduced excessive line breaks",
       impact.punctuation && "Fixed punctuation spacing",
@@ -422,11 +437,31 @@ function renderImpact(els, impact) {
 function renderChanges(els, changes) {
   if (!els.changeSummary) return;
 
-  els.changeSummary.textContent = changes.length
+  els.changeSummary.textContent = changes && changes.length
     ? changes.join(" • ")
     : "No major cleanup needed";
 }
 
+function renderEditPreview(els, edits) {
+  if (!els.changePreview) return;
+
+  if (!edits || edits.length === 0) {
+    els.changePreview.textContent = "No visible word-level edits yet.";
+    return;
+  }
+
+  els.changePreview.innerHTML = edits
+    .map(edit => {
+      return `
+        <div class="edit-item">
+          <span class="edit-before">${escapeHTML(edit.before)}</span>
+          <span class="edit-arrow">→</span>
+          <span class="edit-after">${escapeHTML(edit.after)}</span>
+        </div>
+      `;
+    })
+    .join("");
+}
 /* -----------------------------
    VERSIONS
 ----------------------------- */
@@ -485,6 +520,10 @@ function clearAll(els) {
   if (els.version1) els.version1.textContent = "";
   if (els.version2) els.version2.textContent = "";
   if (els.version3) els.version3.textContent = "";
+  if (els.changePreview) {
+  els.changePreview.textContent =
+    "Paste text and click Clean Text or Create SecondDraft to see visible changes.";
+  }
 }
 
 /* -----------------------------
@@ -519,4 +558,14 @@ function setText(el, text) {
 
 function escapeRegExp(text) {
   return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function escapeHTML(text) {
+  return String(text)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+
 }
