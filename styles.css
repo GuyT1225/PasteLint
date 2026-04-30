@@ -549,3 +549,11 @@ html[data-theme="terminal"] select {
     display: none;
   }
 }
+#improvementList li {
+  color: var(--text);
+  font-weight: 650;
+}
+
+#improvementList li::marker {
+  color: var(--accent);
+}
