@@ -5,10 +5,6 @@
    Vanilla JavaScript only
 ========================= */
 
-/* =========================
-   DOM References
-========================= */
-
 const els = {
   html: document.documentElement,
   themeButtons: document.querySelectorAll("[data-theme-choice]"),
@@ -34,6 +30,7 @@ const els = {
 
   analysisList: document.getElementById("analysisList"),
   impactList: document.getElementById("impactList"),
+  improvementList: document.getElementById("improvementList"),
   changePreview: document.getElementById("changePreview"),
 
   versionsPanel: document.getElementById("versionsPanel"),
@@ -41,10 +38,6 @@ const els = {
   versionNatural: document.getElementById("versionNatural"),
   versionDirect: document.getElementById("versionDirect")
 };
-
-/* =========================
-   App State
-========================= */
 
 const state = {
   inputText: "",
@@ -59,10 +52,6 @@ const state = {
   },
   lastAction: null
 };
-
-/* =========================
-   Rules
-========================= */
 
 const FILLER_PHRASES = [
   "it is important to note that",
@@ -144,10 +133,6 @@ const VERSION_RULES = {
   }
 };
 
-/* =========================
-   Init
-========================= */
-
 document.addEventListener("DOMContentLoaded", init);
 
 function init() {
@@ -157,6 +142,7 @@ function init() {
   updateCounts();
   updateAnalysis();
   renderList(els.impactList, ["No changes yet."]);
+  renderList(els.improvementList, ["No improvements yet."]);
 }
 
 function bindEvents() {
@@ -182,13 +168,8 @@ function bindEvents() {
     control.addEventListener("change", () => {
       syncStateFromUI();
 
-      if (state.lastAction === "improve" && state.inputText.trim()) {
-        handleImprove();
-      }
-
-      if (state.lastAction === "versions" && state.inputText.trim()) {
-        handleVersions();
-      }
+      if (state.lastAction === "improve" && state.inputText.trim()) handleImprove();
+      if (state.lastAction === "versions" && state.inputText.trim()) handleVersions();
     });
   });
 }
@@ -196,10 +177,6 @@ function bindEvents() {
 function syncStateFromUI() {
   state.inputText = els.input.value || "";
 }
-
-/* =========================
-   Theme Handling
-========================= */
 
 function setTheme(theme) {
   els.html.setAttribute("data-theme", theme);
@@ -215,17 +192,10 @@ function restoreTheme() {
   setTheme(savedTheme);
 }
 
-/* =========================
-   Main Handlers
-========================= */
-
 function handleClean() {
   syncStateFromUI();
 
-  if (!state.inputText.trim()) {
-    showEmptyState();
-    return;
-  }
+  if (!state.inputText.trim()) return showEmptyState();
 
   const result = runCleanPipeline(state.inputText);
 
@@ -239,6 +209,7 @@ function handleClean() {
   els.versionsPanel.classList.add("hidden");
 
   renderImpact(result.report);
+  renderImprovements(result.report);
   renderChangePreview(result.report.previewItems);
   updateCounts();
 }
@@ -246,10 +217,7 @@ function handleClean() {
 function handleImprove() {
   syncStateFromUI();
 
-  if (!state.inputText.trim()) {
-    showEmptyState();
-    return;
-  }
+  if (!state.inputText.trim()) return showEmptyState();
 
   const cleanResult = runCleanPipeline(state.inputText);
   const revisionResult = runRevisionPipeline(cleanResult.text, getOptions());
@@ -264,6 +232,7 @@ function handleImprove() {
   els.versionsPanel.classList.add("hidden");
 
   renderImpact(revisionResult.report);
+  renderImprovements(revisionResult.report);
   renderChangePreview(revisionResult.report.previewItems);
   updateCounts();
 }
@@ -271,10 +240,7 @@ function handleImprove() {
 function handleVersions() {
   syncStateFromUI();
 
-  if (!state.inputText.trim()) {
-    showEmptyState();
-    return;
-  }
+  if (!state.inputText.trim()) return showEmptyState();
 
   const cleanResult = runCleanPipeline(state.inputText);
   const structure = getSelectedValue(els.structureSelect, "preserve");
@@ -317,6 +283,7 @@ function handleVersions() {
   els.output.value = naturalResult.text;
 
   renderImpact(naturalResult.report);
+  renderImprovements(naturalResult.report);
   renderChangePreview(naturalResult.report.previewItems);
   updateCounts();
 }
@@ -341,35 +308,23 @@ function normalizeVersion(value) {
   return value || "balanced";
 }
 
-/* =========================
-   Pipelines
-========================= */
-
 function runCleanPipeline(text) {
-  const original = text;
-  const cleaned = cleanText(original);
-  const report = buildCleanReport(original, cleaned);
+  const cleaned = cleanText(text);
 
   return {
     text: cleaned,
-    report
+    report: buildCleanReport(text, cleaned)
   };
 }
 
 function runRevisionPipeline(text, options) {
-  const original = text;
-  const revised = reviseText(original, options);
-  const report = buildRevisionReport(original, revised, options);
+  const revised = reviseText(text, options);
 
   return {
     text: revised,
-    report
+    report: buildRevisionReport(text, revised, options)
   };
 }
-
-/* =========================
-   Stage 1: PasteLint Clean
-========================= */
 
 function cleanText(text) {
   return text
@@ -386,10 +341,6 @@ function cleanText(text) {
     .replace(/([,.!?;:])([^\s\n])/g, "$1 $2")
     .trim();
 }
-
-/* =========================
-   Stage 2: SecondDraft Revise
-========================= */
 
 function reviseText(text, options) {
   let revised = text;
@@ -464,14 +415,8 @@ function applyVersion(text, version) {
 }
 
 function applyLength(text, length) {
-  if (length === "shorter") {
-    return shortenText(text);
-  }
-
-  if (length === "expand") {
-    return expandSlightly(text);
-  }
-
+  if (length === "shorter") return shortenText(text);
+  if (length === "expand") return expandSlightly(text);
   return text;
 }
 
@@ -515,10 +460,6 @@ function polishSpacing(text) {
     .trim();
 }
 
-/* =========================
-   Reports + Analysis
-========================= */
-
 function analyzeText(text) {
   const sentences = splitSentences(text);
   const words = getWords(text);
@@ -534,8 +475,6 @@ function analyzeText(text) {
     return lower.includes(word.toLowerCase());
   }).length;
 
-  const repeatedWords = findRepeatedWords(words);
-
   return {
     chars: text.length,
     words: words.length,
@@ -545,14 +484,11 @@ function analyzeText(text) {
     longSentences,
     fillerCount,
     formalWords,
-    repeatedWords
+    repeatedWords: findRepeatedWords(words)
   };
 }
 
 function buildCleanReport(original, cleaned) {
-  const originalAnalysis = analyzeText(original);
-  const cleanedAnalysis = analyzeText(cleaned);
-
   const changes = [];
 
   addChangeIf(changes, hasNbsp(original), {
@@ -617,10 +553,6 @@ function buildCleanReport(original, cleaned) {
     impactItems.push(`Cleaned ${changes.length} formatting issue${plural(changes.length)}.`);
   }
 
-  if (originalAnalysis.words !== cleanedAnalysis.words) {
-    impactItems.push("Updated text stats after cleanup.");
-  }
-
   if (!impactItems.length && original !== cleaned) {
     impactItems.push("Cleaned minor spacing and punctuation issues.");
   }
@@ -649,25 +581,11 @@ function buildRevisionReport(original, revised, options) {
   const longSentenceReduction = Math.max(0, originalAnalysis.longSentences - revisedAnalysis.longSentences);
   const charReduction = Math.max(0, original.length - revised.length);
 
-  if (fillerRemoved > 0) {
-    impactItems.push(`Removed ${fillerRemoved} filler phrase${plural(fillerRemoved)}.`);
-  }
-
-  if (formalSimplified > 0) {
-    impactItems.push(`Simplified ${formalSimplified} word or phrase choice${plural(formalSimplified)}.`);
-  }
-
-  if (longSentenceReduction > 0) {
-    impactItems.push(`Reduced ${longSentenceReduction} long sentence${plural(longSentenceReduction)}.`);
-  }
-
-  if (charReduction > 20) {
-    impactItems.push(`Trimmed about ${charReduction} characters.`);
-  }
-
-  if (options.structure === "reflow") {
-    impactItems.push("Reflowed text into a smoother paragraph structure.");
-  }
+  if (fillerRemoved > 0) impactItems.push(`Removed ${fillerRemoved} filler phrase${plural(fillerRemoved)}.`);
+  if (formalSimplified > 0) impactItems.push(`Simplified ${formalSimplified} word or phrase choice${plural(formalSimplified)}.`);
+  if (longSentenceReduction > 0) impactItems.push(`Reduced ${longSentenceReduction} long sentence${plural(longSentenceReduction)}.`);
+  if (charReduction > 20) impactItems.push(`Trimmed about ${charReduction} characters.`);
+  if (options.structure === "reflow") impactItems.push("Reflowed text into a smoother paragraph structure.");
 
   const versionInfo = VERSION_RULES[options.version] || VERSION_RULES.balanced;
   impactItems.push(`${versionInfo.label}: ${versionInfo.reason}`);
@@ -682,10 +600,6 @@ function buildRevisionReport(original, revised, options) {
       after: "cleaner phrasing",
       reason: "The revision adjusted rhythm, spacing, or sentence flow."
     });
-  }
-
-  if (!impactItems.length) {
-    impactItems.push("No major revision needed. The text was already clear.");
   }
 
   return {
@@ -737,8 +651,27 @@ function buildPreviewItemsFromChanges(changes) {
   }));
 }
 
-function addChangeIf(list, condition, change) {
-  if (condition) list.push(change);
+function buildImprovementSummary(report) {
+  const improvements = [];
+
+  if (!report || !report.impactItems) return ["No improvements yet."];
+
+  report.impactItems.forEach((item) => {
+    if (item.includes("Cleaned")) improvements.push("The text is cleaner and easier to paste into other tools.");
+    if (item.includes("filler")) improvements.push("Your writing gets to the point faster.");
+    if (item.includes("Simplified")) improvements.push("Your wording is clearer and easier to understand.");
+    if (item.includes("Reduced") || item.includes("Trimmed")) improvements.push("The text is tighter and easier to scan.");
+    if (item.includes("Reflowed")) improvements.push("The structure now reads more smoothly.");
+    if (item.includes("Balanced revision")) improvements.push("The draft keeps your meaning while improving flow.");
+    if (item.includes("Light revision")) improvements.push("The draft stays close to the original with restrained edits.");
+    if (item.includes("Stronger revision")) improvements.push("The draft reads more directly without becoming a rewrite.");
+  });
+
+  if (!improvements.length) {
+    improvements.push("Your text was already clear. Only minor refinements were needed.");
+  }
+
+  return [...new Set(improvements)];
 }
 
 function updateAnalysis() {
@@ -750,28 +683,17 @@ function updateAnalysis() {
   }
 
   const analysis = analyzeText(text);
-  const items = [];
+  const items = [
+    `${analysis.words} word${plural(analysis.words)}.`,
+    `${analysis.sentences} sentence${plural(analysis.sentences)}.`,
+    `${analysis.paragraphs} paragraph${plural(analysis.paragraphs)}.`,
+    `Estimated read time: ${analysis.readTime}.`
+  ];
 
-  items.push(`${analysis.words} word${plural(analysis.words)}.`);
-  items.push(`${analysis.sentences} sentence${plural(analysis.sentences)}.`);
-  items.push(`${analysis.paragraphs} paragraph${plural(analysis.paragraphs)}.`);
-  items.push(`Estimated read time: ${analysis.readTime}.`);
-
-  if (analysis.longSentences > 0) {
-    items.push(`${analysis.longSentences} long sentence${plural(analysis.longSentences)} could be easier to scan.`);
-  }
-
-  if (analysis.fillerCount > 0) {
-    items.push(`${analysis.fillerCount} filler phrase${plural(analysis.fillerCount)} may slow the writing down.`);
-  }
-
-  if (analysis.formalWords > 0) {
-    items.push(`${analysis.formalWords} formal word or phrase choice${plural(analysis.formalWords)} could be simpler.`);
-  }
-
-  if (analysis.repeatedWords.length > 0) {
-    items.push(`Repeated wording found: ${analysis.repeatedWords.slice(0, 3).join(", ")}.`);
-  }
+  if (analysis.longSentences > 0) items.push(`${analysis.longSentences} long sentence${plural(analysis.longSentences)} could be easier to scan.`);
+  if (analysis.fillerCount > 0) items.push(`${analysis.fillerCount} filler phrase${plural(analysis.fillerCount)} may slow the writing down.`);
+  if (analysis.formalWords > 0) items.push(`${analysis.formalWords} formal word or phrase choice${plural(analysis.formalWords)} could be simpler.`);
+  if (analysis.repeatedWords.length > 0) items.push(`Repeated wording found: ${analysis.repeatedWords.slice(0, 3).join(", ")}.`);
 
   if (items.length <= 4) {
     items.push("This text is already fairly clean. A light revision may still improve flow.");
@@ -780,23 +702,12 @@ function updateAnalysis() {
   renderList(els.analysisList, items);
 }
 
-function countSimplifiedWords(original, revised) {
-  const originalLower = original.toLowerCase();
-  const revisedLower = revised.toLowerCase();
-
-  return Object.entries(WORD_REPLACEMENTS).reduce((count, [from, to]) => {
-    const hadOriginal = countMatches(originalLower, from.toLowerCase()) > 0;
-    const hasReplacement = countMatches(revisedLower, to.toLowerCase()) > 0;
-    return hadOriginal && hasReplacement ? count + 1 : count;
-  }, 0);
-}
-
-/* =========================
-   Rendering
-========================= */
-
 function renderImpact(report) {
   renderList(els.impactList, report.impactItems);
+}
+
+function renderImprovements(report) {
+  renderList(els.improvementList, buildImprovementSummary(report));
 }
 
 function renderChangePreview(items) {
@@ -834,10 +745,6 @@ function renderList(listEl, items) {
   if (!listEl) return;
   listEl.innerHTML = items.map((item) => `<li>${escapeHtml(item)}</li>`).join("");
 }
-
-/* =========================
-   Counters + Utility UI
-========================= */
 
 function updateCounts() {
   updateTextStats(els.input.value, els.inputCharCount, els.inputWordCount);
@@ -892,20 +799,17 @@ function clearAll() {
   els.versionDirect.textContent = "";
   els.versionsPanel.classList.add("hidden");
 
-  els.changePreview.textContent = "Paste text and click Improve Text to see visible changes.";
+  els.changePreview.textContent = "Paste text and click Clean Text or Create SecondDraft to see visible changes.";
 
   renderList(els.analysisList, ["Paste text to see a quick readability check."]);
   renderList(els.impactList, ["No changes yet."]);
+  renderList(els.improvementList, ["No improvements yet."]);
   updateCounts();
 }
 
 function showEmptyState() {
-  renderList(els.analysisList, ["Paste text first, then choose Clean Text or Improve Text."]);
+  renderList(els.analysisList, ["Paste text first, then choose Clean Text or Create SecondDraft."]);
 }
-
-/* =========================
-   Text Helpers
-========================= */
 
 function splitSentences(text) {
   return text
@@ -958,6 +862,21 @@ function countMatches(text, search) {
   if (!search) return 0;
   const regex = new RegExp(`\\b${escapeRegExp(search)}\\b`, "gi");
   return (text.match(regex) || []).length;
+}
+
+function countSimplifiedWords(original, revised) {
+  const originalLower = original.toLowerCase();
+  const revisedLower = revised.toLowerCase();
+
+  return Object.entries(WORD_REPLACEMENTS).reduce((count, [from, to]) => {
+    const hadOriginal = countMatches(originalLower, from.toLowerCase()) > 0;
+    const hasReplacement = countMatches(revisedLower, to.toLowerCase()) > 0;
+    return hadOriginal && hasReplacement ? count + 1 : count;
+  }, 0);
+}
+
+function addChangeIf(list, condition, change) {
+  if (condition) list.push(change);
 }
 
 function hasNbsp(text) {
