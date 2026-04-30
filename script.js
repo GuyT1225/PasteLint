@@ -420,12 +420,7 @@ function applyVersion(text, version) {
   return text;
 }
 
-  return text
-    .replace(/\bvery\s+/gi, "")
-    .replace(/\breally\s+/gi, "")
-    .replace(/\bin many different ways\b/gi, "in many ways");
-}
-
+  
 function applyLength(text, length) {
   if (length === "shorter") return shortenText(text);
   if (length === "expand") return expandSlightly(text);
