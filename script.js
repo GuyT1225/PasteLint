@@ -87,7 +87,6 @@ const COMMON_TYPOS = {
   calender: "calendar",
   tommorow: "tomorrow",
   yesturday: "yesterday",
-  occured: "occurred",
   alot: "a lot"
 };
 
@@ -113,10 +112,7 @@ function fixCommonTypos(text) {
     return replacement;
   });
 
-  return {
-    text: fixed,
-    count
-  };
+  return { text: fixed, count };
 }
 
 function fixRepeatedWords(text) {
@@ -127,10 +123,7 @@ function fixRepeatedWords(text) {
     return word;
   });
 
-  return {
-    text: fixed,
-    count
-  };
+  return { text: fixed, count };
 }
 
 function capitalize(text) {
@@ -143,39 +136,42 @@ function capitalize(text) {
 
 function runPreAnalysis(els) {
   const text = getInputText(els);
-  if (!text) return;
+
+  if (!text) {
+    if (els.issuePanel) els.issuePanel.textContent = "";
+    return;
+  }
 
   const issues = detectIssues(text);
 
   if (els.issuePanel) {
     els.issuePanel.textContent = issues.length
-      ? issues.map(i => `• ${i}`).join("\n")
+      ? issues.map(issue => `• ${issue}`).join("\n")
       : "No obvious issues detected";
   }
 }
 
 function detectIssues(text) {
   const issues = [];
-
   const sentences = text.split(/[.!?]/).filter(Boolean);
 
-  if (sentences.some(s => s.split(" ").length > 25)) {
+  if (sentences.some(sentence => sentence.trim().split(/\s+/).length > 25)) {
     issues.push("Some sentences are too long");
   }
 
-  if (/(very|really|basically|actually)/gi.test(text)) {
+  if (/(very|really|basically|actually)/i.test(text)) {
     issues.push("Contains filler words");
   }
 
   if (hasRepetition(text)) {
-    issues.push("Repeated words or phrases detected");
+    issues.push("Repeated words detected");
   }
 
   if (hasCommonTypos(text)) {
     issues.push("Possible common typos detected");
   }
 
-  if (/(utilize|assistance|facilitate)/gi.test(text)) {
+  if (/(utilize|assistance|facilitate)/i.test(text)) {
     issues.push("Overly formal wording");
   }
 
@@ -201,12 +197,12 @@ function handleClean(els) {
   const raw = getInputText(els);
   if (!raw) return;
 
-  const result = cleanText(raw);
-  setOutput(els, result.text);
+  const mode = getCleanMode(els);
+  const result = cleanText(raw, mode);
 
+  setOutput(els, result.text);
   renderImpact(els, result.impact);
   renderChanges(els, result.changes);
-
   updateCounters(els);
 }
 
@@ -222,10 +218,8 @@ function handleRewrite(els) {
 
   setOutput(els, versions[0].text);
   renderVersions(els, versions);
-
   renderImpact(els, versions[0].impact);
   renderChanges(els, versions[0].changes);
-
   updateCounters(els);
 }
 
@@ -233,7 +227,7 @@ function handleRewrite(els) {
    CLEAN ENGINE
 ----------------------------- */
 
-function cleanText(text) {
+function cleanText(text, mode = "paragraph") {
   let cleaned = text;
 
   const impact = {
@@ -244,7 +238,7 @@ function cleanText(text) {
     repeatedWords: 0
   };
 
-  cleaned = cleaned.replace(/\s{2,}/g, () => {
+  cleaned = cleaned.replace(/[ \t]{2,}/g, () => {
     impact.spaces++;
     return " ";
   });
@@ -254,9 +248,9 @@ function cleanText(text) {
     return "\n\n";
   });
 
-  cleaned = cleaned.replace(/\s+([,.;!?])/g, () => {
+  cleaned = cleaned.replace(/\s+([,.;!?])/g, (match, punctuation) => {
     impact.punctuation++;
-    return "$1";
+    return punctuation;
   });
 
   const typoResult = fixCommonTypos(cleaned);
@@ -267,19 +261,37 @@ function cleanText(text) {
   cleaned = repeatedWordResult.text;
   impact.repeatedWords = repeatedWordResult.count;
 
-  cleaned = cleaned.trim();
+  cleaned = applyCleanMode(cleaned, mode);
 
   return {
-    text: cleaned,
+    text: cleaned.trim(),
     impact,
     changes: [
       impact.spaces && "Collapsed extra spaces",
       impact.lines && "Reduced excessive line breaks",
       impact.punctuation && "Fixed punctuation spacing",
       impact.typos && `Fixed ${impact.typos} common typo${impact.typos === 1 ? "" : "s"}`,
-      impact.repeatedWords && `Removed ${impact.repeatedWords} repeated word${impact.repeatedWords === 1 ? "" : "s"}`
+      impact.repeatedWords && `Removed ${impact.repeatedWords} repeated word${impact.repeatedWords === 1 ? "" : "s"}`,
+      mode === "line" && "Cleaned text line by line",
+      mode === "paragraph" && "Cleaned text as paragraphs"
     ].filter(Boolean)
   };
+}
+
+function applyCleanMode(text, mode) {
+  if (mode === "line") {
+    return text
+      .split("\n")
+      .map(line => line.trim())
+      .filter(Boolean)
+      .join("\n");
+  }
+
+  return text
+    .split(/\n+/)
+    .map(line => line.trim())
+    .filter(Boolean)
+    .join("\n\n");
 }
 
 /* -----------------------------
@@ -300,6 +312,8 @@ function rewriteConcise(text) {
   out = out.replace(/It is important to note that/gi, "");
   out = out.replace(/due to the fact that/gi, "because");
   out = out.replace(/in order to/gi, "to");
+  out = out.replace(/for the purpose of/gi, "to");
+  out = out.replace(/at this point in time/gi, "now");
 
   return buildResult("Concise", text, out);
 }
@@ -310,6 +324,8 @@ function rewriteNatural(text) {
   out = out.replace(/utilize/gi, "use");
   out = out.replace(/assistance/gi, "help");
   out = out.replace(/facilitate/gi, "help");
+  out = out.replace(/with regard to/gi, "about");
+  out = out.replace(/prior to/gi, "before");
 
   return buildResult("Natural", text, out);
 }
@@ -320,6 +336,8 @@ function rewriteDirect(text) {
   out = out.replace(/I would like to/gi, "");
   out = out.replace(/It seems that/gi, "");
   out = out.replace(/There is/gi, "");
+  out = out.replace(/There are/gi, "");
+  out = out.replace(/Please be advised that/gi, "");
 
   return buildResult("Direct", text, out);
 }
@@ -329,22 +347,26 @@ function rewriteDirect(text) {
 ----------------------------- */
 
 function buildResult(label, original, revised) {
-  const changes = [];
-
-  if (original !== revised) {
-    changes.push("Reworded for clarity");
-  }
+  const cleanedRevised = normalizeRewrite(revised);
 
   const impact = {
-    shortened: Math.max(0, original.length - revised.length)
+    shortened: Math.max(0, original.length - cleanedRevised.length)
   };
 
   return {
     label,
-    text: revised.trim(),
-    changes,
+    text: cleanedRevised,
+    changes: original !== cleanedRevised ? [`Created ${label.toLowerCase()} version`] : ["No major rewrite needed"],
     impact
   };
+}
+
+function normalizeRewrite(text) {
+  return text
+    .replace(/[ \t]{2,}/g, " ")
+    .replace(/\s+([,.;!?])/g, "$1")
+    .replace(/\n{3,}/g, "\n\n")
+    .trim();
 }
 
 /* -----------------------------
@@ -385,6 +407,7 @@ function renderImpact(els, impact) {
 
 function renderChanges(els, changes) {
   if (!els.changeSummary) return;
+
   els.changeSummary.textContent = changes.length
     ? changes.join(" • ")
     : "No major cleanup needed";
@@ -397,9 +420,9 @@ function renderChanges(els, changes) {
 function renderVersions(els, versions) {
   const targets = [els.version1, els.version2, els.version3];
 
-  versions.forEach((v, i) => {
-    if (targets[i]) {
-      targets[i].textContent = `${v.label}\n\n${v.text}`;
+  versions.forEach((version, index) => {
+    if (targets[index]) {
+      targets[index].textContent = `${version.label}\n\n${version.text}`;
     }
   });
 }
@@ -460,6 +483,16 @@ function getInputText(els) {
 
 function getSourceForRewrite(els) {
   return els.output?.value.trim() || getInputText(els);
+}
+
+function getCleanMode(els) {
+  if (!els.modeToggle) return "paragraph";
+
+  if (els.modeToggle.type === "checkbox") {
+    return els.modeToggle.checked ? "line" : "paragraph";
+  }
+
+  return els.modeToggle.value === "line" ? "line" : "paragraph";
 }
 
 function setOutput(els, text) {
