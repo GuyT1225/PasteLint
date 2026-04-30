@@ -192,6 +192,18 @@ document.addEventListener("DOMContentLoaded", () => {
     return cards;
   }
 
+  function normalizeForCompare(token) {
+    return (token || "")
+      .replace(/[“”]/g, '"')
+      .replace(/[‘’]/g, "'")
+      .replace(/[–—]/g, "-")
+      .trim();
+  }
+
+  function tokenizeMeaningfully(text) {
+    return (text || "").match(/\s+|[^\s]+/g) || [];
+  }
+
   function renderHighlightPreview(original, cleaned) {
     const preview = $("highlightPreview");
     const target = $("highlightOutput");
@@ -205,15 +217,26 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    const originalTokens = (original || "").split(/(\s+)/);
-    const cleanedTokens = (cleaned || "").split(/(\s+)/);
+    const originalTokens = tokenizeMeaningfully(original).filter((token) => token.trim());
+    const cleanedTokens = tokenizeMeaningfully(cleaned);
 
-    cleanedTokens.forEach((token, index) => {
+    const originalNormalized = originalTokens.map(normalizeForCompare);
+
+    cleanedTokens.forEach((token) => {
       const span = document.createElement("span");
       span.textContent = token;
 
-      if (token.trim() && token !== originalTokens[index]) {
-        span.className = "highlight-added";
+      const isWhitespace = !token.trim();
+      const normalized = normalizeForCompare(token);
+
+      if (!isWhitespace) {
+        const existedBefore = originalNormalized.includes(normalized);
+        const isMeaningfulText = /[A-Za-z0-9]/.test(token);
+
+        if (!existedBefore && isMeaningfulText) {
+          span.className = "highlight-added";
+          span.title = "Cleaned or normalized text";
+        }
       }
 
       target.appendChild(span);
