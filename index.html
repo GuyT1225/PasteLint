@@ -4,6 +4,212 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+  <title>PasteLint + SecondDraft | Clean Text and See What Changed</title>
+  <meta name="description" content="PasteLint cleans messy pasted text and SecondDraft helps improve clarity, tone, and flow. Browser-only, private, no login, no upload." />
+  <link rel="canonical" href="https://guyt1225.github.io/pastelint/" />
+
+  <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+  <header class="site-header">
+    <div class="brand">
+      <a href="/" class="brand-link">PasteLint</a>
+      <span class="brand-pill">SecondDraft</span>
+    </div>
+
+    <nav class="theme-switcher" aria-label="Theme selector">
+      <button class="theme-btn active" type="button" data-theme-choice="light">Light</button>
+      <button class="theme-btn" type="button" data-theme-choice="dark">Dark</button>
+      <button class="theme-btn" type="button" data-theme-choice="terminal">Terminal</button>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <p class="eyebrow">Private browser-only text cleanup</p>
+      <h1>Clean messy text. Then make it read better.</h1>
+      <p class="hero-subtitle">
+        PasteLint fixes formatting, spacing, punctuation, and hidden characters.
+        SecondDraft helps revise the cleaned text for clarity and flow.
+      </p>
+
+      <div class="trust-row" aria-label="Trust notes">
+        <span>No login</span>
+        <span>No upload</span>
+        <span>No API</span>
+        <span>Runs in your browser</span>
+      </div>
+    </section>
+
+    <section class="tool-shell" aria-labelledby="tool-title">
+      <div class="tool-heading">
+        <div>
+          <h2 id="tool-title">Paste → Clean → Understand → Revise</h2>
+          <p>
+            First clean the text. Then review what changed. Then use SecondDraft only if the writing needs a clearer version.
+          </p>
+        </div>
+
+        <div class="mode-note">
+          <strong>Default:</strong> restrained edits, visible changes, preserved meaning.
+        </div>
+      </div>
+
+      <div class="controls-panel" aria-label="SecondDraft revision controls">
+        <div class="control-group">
+          <label for="toneSelect">Tone</label>
+          <select id="toneSelect">
+            <option value="natural" selected>Natural</option>
+            <option value="concise">Concise</option>
+            <option value="professional">Professional</option>
+            <option value="friendly">Friendly</option>
+            <option value="direct">Direct</option>
+          </select>
+        </div>
+
+        <div class="control-group">
+          <label for="lengthSelect">Length</label>
+          <select id="lengthSelect">
+            <option value="similar" selected>Keep similar</option>
+            <option value="shorter">Shorter</option>
+            <option value="expand">Expand slightly</option>
+          </select>
+        </div>
+
+        <div class="control-group">
+          <label for="structureSelect">Structure</label>
+          <select id="structureSelect">
+            <option value="preserve" selected>Preserve layout</option>
+            <option value="reflow">Reflow paragraphs</option>
+          </select>
+        </div>
+
+        <div class="control-group">
+          <label for="versionSelect">Revision strength</label>
+          <select id="versionSelect">
+            <option value="natural" selected>Balanced</option>
+            <option value="concise">Light</option>
+            <option value="direct">Stronger</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="editor-grid">
+        <section class="textarea-card">
+          <div class="textarea-header">
+            <label for="inputText">Original text</label>
+            <div class="text-meta">
+              <span id="inputCharCount">0 chars</span>
+              <span id="inputWordCount">0 words</span>
+            </div>
+          </div>
+
+          <textarea id="inputText" placeholder="Paste AI output, emails, PDFs, Word text, website copy, or anything messy."></textarea>
+
+          <div class="button-row">
+            <button id="cleanBtn" class="secondary-btn" type="button">Clean Text</button>
+            <button id="improveBtn" class="primary-btn" type="button">Create SecondDraft</button>
+            <button id="versionsBtn" class="secondary-btn" type="button">Generate 3 Versions</button>
+          </div>
+        </section>
+
+        <section class="textarea-card">
+          <div class="textarea-header">
+            <label for="outputText">Cleaned or revised output</label>
+            <div class="text-meta">
+              <span id="outputCharCount">0 chars</span>
+              <span id="outputWordCount">0 words</span>
+            </div>
+          </div>
+
+          <textarea id="outputText" placeholder="Your cleaned or revised text will appear here..." readonly></textarea>
+
+          <div class="button-row">
+            <button id="copyBtn" class="primary-btn" type="button">Copy Output</button>
+            <button id="clearBtn" class="secondary-btn" type="button">Clear</button>
+          </div>
+        </section>
+      </div>
+
+      <section class="insight-grid" aria-label="Text insights">
+        <article class="insight-card">
+          <h3>Text Brief</h3>
+          <ul id="analysisList">
+            <li>Paste text to see a quick readability check.</li>
+          </ul>
+        </article>
+
+        <article class="insight-card">
+          <h3>What PasteLint Found</h3>
+          <ul id="impactList">
+            <li>No changes yet.</li>
+          </ul>
+        </article>
+
+        <article class="insight-card">
+          <h3>What improved</h3>
+          <ul id="improvementList">
+            <li>No improvements yet.</li>
+          </ul>
+        </article>
+
+        <article class="insight-card wide">
+          <h3>Edit Map</h3>
+          <div id="changePreview" class="change-preview">
+            Paste text and click Clean Text or Create SecondDraft to see visible changes.
+          </div>
+        </article>
+      </section>
+
+      <section id="versionsPanel" class="versions-panel hidden" aria-label="Three revision versions">
+        <div class="section-heading">
+          <h3>Three revision options</h3>
+          <p>Choose the version that best matches your intent. You always have the final cut.</p>
+        </div>
+
+        <div class="version-grid">
+          <article>
+            <h4>Concise</h4>
+            <p id="versionConcise"></p>
+          </article>
+
+          <article>
+            <h4>Natural</h4>
+            <p id="versionNatural"></p>
+          </article>
+
+          <article>
+            <h4>Direct</h4>
+            <p id="versionDirect"></p>
+          </article>
+        </div>
+      </section>
+    </section>
+
+    <section class="positioning-panel">
+      <h2>Clean first. Revise second.</h2>
+      <p>
+        PasteLint makes pasted text usable. SecondDraft helps improve readability, rhythm, and tone after cleanup.
+      </p>
+      <p>
+        This is not a detector bypass tool or a synonym spinner. It focuses on clarity, restraint, and preserving meaning.
+      </p>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <p>PasteLint runs entirely in your browser. Your text never leaves your device.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html><!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <title>PasteLint + SecondDraft | Clean and Improve Text</title>
   <meta name="description" content="PasteLint cleans messy pasted text and SecondDraft makes writing clearer, smoother, and easier to read. Browser-only, private, and free to use." />
 
