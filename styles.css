@@ -1029,3 +1029,179 @@ html[data-theme="terminal"] .primary-btn {
     transform: none;
   }
 }
+/* =========================================================
+   PasteLint Final Polish + Premium Feel Pass
+   Safe override layer
+   ========================================================= */
+
+/* Better overall rhythm */
+.hero,
+.section,
+.versions-panel,
+.positioning-panel {
+  margin-bottom: var(--space-6);
+}
+
+.hero {
+  max-width: 960px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.hero > * {
+  max-width: 760px;
+}
+
+/* More intentional layout spacing */
+main,
+.main,
+.tool-shell {
+  gap: var(--space-6);
+}
+
+/* Slightly cleaner terminal borders */
+html[data-theme="terminal"] {
+  --color-border: #184f2f;
+  --color-border-strong: #2a7a4a;
+}
+
+/* Better focus consistency */
+:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+/* Inputs feel more tactile without becoming flashy */
+textarea,
+input,
+select {
+  border-color: var(--color-border);
+}
+
+select {
+  background-image: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.025),
+    rgba(0, 0, 0, 0.045)
+  );
+}
+
+html[data-theme="terminal"] textarea,
+html[data-theme="terminal"] input,
+html[data-theme="terminal"] select {
+  caret-color: var(--color-primary);
+  box-shadow: inset 0 0 12px rgba(87, 255, 138, 0.045);
+}
+
+/* Stronger editor separation */
+.textarea-card {
+  border-color: var(--color-border-strong);
+}
+
+/* Cleaner section hierarchy */
+.section,
+.card,
+.textarea-card,
+.insight-card,
+.versions-panel,
+.positioning-panel,
+.version-grid article,
+.change-preview,
+.change-row {
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    background-color var(--transition-fast);
+}
+
+/* Subtle premium depth */
+.section,
+.hero,
+.textarea-card,
+.versions-panel,
+.positioning-panel {
+  box-shadow: var(--shadow-md);
+}
+
+.card,
+.insight-card,
+.version-grid article,
+.change-preview,
+.change-row {
+  box-shadow: var(--shadow-sm);
+}
+
+/* Theme switcher refinement */
+.theme-switcher,
+.theme-controls {
+  margin-top: var(--space-2);
+}
+
+.theme-switcher button,
+.theme-controls button {
+  letter-spacing: 0.01em;
+}
+
+/* Button refinement */
+.primary-btn,
+.secondary-btn,
+.warning-btn,
+.btn {
+  letter-spacing: 0.01em;
+}
+
+/* Workflow / process copy support */
+.workflow-line,
+.process-line,
+.flow-line {
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.workflow-line span,
+.process-line span,
+.flow-line span {
+  opacity: 0.72;
+}
+
+/* Better text wrapping across legacy/current panels */
+.section,
+.card,
+.textarea-card,
+.insight-card,
+.versions-panel,
+.positioning-panel,
+.version-grid article,
+.change-preview,
+.change-row,
+.output-panel,
+.preview-panel,
+.result-panel {
+  overflow-wrap: anywhere;
+}
+
+/* Slightly nicer muted text */
+.muted-text,
+.help-text,
+.hint,
+.small {
+  line-height: 1.45;
+}
+
+/* Mobile polish */
+@media (max-width: 800px) {
+  .hero {
+    max-width: none;
+  }
+
+  .hero > * {
+    max-width: none;
+  }
+
+  .hero,
+  .section,
+  .versions-panel,
+  .positioning-panel {
+    margin-bottom: var(--space-5);
+  }
+}
