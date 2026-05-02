@@ -1233,3 +1233,188 @@ html[data-theme="terminal"] .primary-btn {
     transform: none;
   }
 }
+/* =========================================================
+   PasteLint Builder-Style Alignment Pass
+   Match Simple SSML IVR Builder feel
+   Add at bottom of styles.css
+   ========================================================= */
+
+/* Builder-style page shell */
+.page,
+.app,
+.site-shell,
+.tool-shell,
+main,
+.main,
+.header,
+.site-header,
+footer,
+.footer,
+.site-footer {
+  width: min(100% - 2.5rem, 1100px);
+  max-width: 1100px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Remove landing-page centered hero feel */
+.hero {
+  width: 100%;
+  max-width: none;
+  margin: 0 0 var(--space-5);
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.hero > * {
+  max-width: 900px;
+}
+
+/* Keep hero text left-aligned like builder */
+.hero,
+.header,
+.site-header {
+  text-align: left;
+}
+
+.brand,
+.logo,
+.site-title {
+  justify-content: flex-start;
+  text-align: left;
+}
+
+/* Theme buttons should sit naturally under header */
+.theme-switcher,
+.theme-controls {
+  width: auto;
+  max-width: none;
+  margin: var(--space-4) 0 var(--space-6);
+  justify-content: flex-start;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+}
+
+/* Make sections flatter and builder-like */
+.section,
+.textarea-card,
+.insight-card,
+.versions-panel,
+.positioning-panel,
+.version-grid article,
+.controls-panel,
+.selector-panel,
+.options-panel,
+.tool-options,
+.tool-controls,
+.change-preview,
+.output-panel,
+.preview-panel,
+.result-panel,
+footer,
+.footer,
+.site-footer {
+  background: var(--color-surface);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: none;
+}
+
+/* Nested selector panel like SSML Builder */
+.controls-panel,
+.selector-panel,
+.options-panel,
+.tool-options,
+.tool-controls {
+  width: 100%;
+  max-width: none;
+  margin: 0 0 var(--space-5);
+  padding: var(--space-5);
+}
+
+/* If selectors are direct children, keep them full-width */
+.tool-shell > label,
+.tool-shell > select,
+main > label,
+main > select,
+.main > label,
+.main > select {
+  width: 100%;
+  max-width: none;
+}
+
+/* Controls/selectors should use full panel width like builder */
+.controls,
+.form-row {
+  width: 100%;
+  max-width: none;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+/* Stack raw and output vertically */
+.editor-grid {
+  grid-template-columns: 1fr;
+  gap: var(--space-5);
+}
+
+/* Text areas closer to builder proportions */
+textarea {
+  min-height: 180px;
+}
+
+/* Footer/trust block should not stretch full browser width */
+footer,
+.footer,
+.site-footer {
+  margin-top: var(--space-8);
+  text-align: left;
+}
+
+/* Terminal should stay clean, not overly glowy */
+html[data-theme="terminal"] .hero,
+html[data-theme="terminal"] .section,
+html[data-theme="terminal"] .textarea-card,
+html[data-theme="terminal"] .insight-card,
+html[data-theme="terminal"] .versions-panel,
+html[data-theme="terminal"] .positioning-panel,
+html[data-theme="terminal"] .version-grid article,
+html[data-theme="terminal"] .controls-panel,
+html[data-theme="terminal"] .selector-panel,
+html[data-theme="terminal"] .options-panel,
+html[data-theme="terminal"] .tool-options,
+html[data-theme="terminal"] .tool-controls,
+html[data-theme="terminal"] footer,
+html[data-theme="terminal"] .footer,
+html[data-theme="terminal"] .site-footer {
+  box-shadow: none;
+}
+
+/* Dark and terminal readability closer to builder */
+html[data-theme="dark"] .info-box,
+html[data-theme="terminal"] .info-box {
+  background: var(--color-info-bg);
+  border-color: var(--color-info-border);
+}
+
+/* Mobile stays clean */
+@media (max-width: 800px) {
+  .page,
+  .app,
+  .site-shell,
+  .tool-shell,
+  main,
+  .main,
+  .header,
+  .site-header,
+  footer,
+  .footer,
+  .site-footer {
+    width: min(100% - 1.25rem, 1100px);
+  }
+}
