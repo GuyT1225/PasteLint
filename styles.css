@@ -1646,3 +1646,342 @@ html[data-theme="terminal"] .site-footer {
     min-height: 150px;
   }
 }
+/* =========================================================
+   PasteLint SSML Builder Match Pass
+   Tight, clean, utility-style terminal layout
+   ========================================================= */
+
+:root {
+  --tool-max-width: 760px;
+}
+
+/* One narrow builder-style column */
+.page,
+.app,
+.site-shell,
+.tool-shell,
+main,
+.main,
+.header,
+.site-header,
+footer,
+.footer,
+.site-footer {
+  width: min(100% - 1.25rem, var(--tool-max-width));
+  max-width: var(--tool-max-width);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Reduce top looseness */
+.page,
+.app,
+.site-shell {
+  padding-top: var(--space-2);
+  padding-bottom: var(--space-8);
+}
+
+.header,
+.site-header {
+  margin-bottom: var(--space-3);
+}
+
+/* Brand/header like builder */
+.brand,
+.logo,
+.site-title {
+  justify-content: flex-start;
+  text-align: left;
+  margin-bottom: var(--space-2);
+}
+
+/* Theme buttons like builder */
+.theme-switcher,
+.theme-controls {
+  width: auto;
+  max-width: none;
+  margin: var(--space-3) 0 var(--space-5);
+  padding: 0;
+  justify-content: flex-start;
+  gap: var(--space-2);
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.theme-switcher button,
+.theme-controls button {
+  min-height: 1.85rem;
+  padding: 0.35rem 0.75rem;
+  border: var(--border-width) solid var(--color-border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--color-text);
+  font-size: 0.82rem;
+}
+
+.theme-switcher button.active,
+.theme-controls button.active,
+.theme-switcher button[aria-pressed="true"],
+.theme-controls button[aria-pressed="true"] {
+  background: var(--color-primary);
+  color: var(--color-primary-text);
+  border-color: var(--color-primary);
+}
+
+/* Hero becomes clean intro copy, not a landing card */
+.hero {
+  width: 100%;
+  max-width: none;
+  margin: 0 0 var(--space-5);
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.hero > * {
+  max-width: 100%;
+}
+
+.hero h1 {
+  max-width: 720px;
+  margin: var(--space-2) 0 var(--space-3);
+  font-size: clamp(2rem, 6vw, 3.15rem);
+  line-height: 1.05;
+}
+
+.hero p {
+  max-width: 720px;
+  line-height: 1.45;
+}
+
+/* Workflow closer and cleaner */
+.workflow-line,
+.process-line,
+.flow-line {
+  margin: var(--space-4) 0 var(--space-1);
+  font-size: clamp(1.35rem, 4vw, 2rem);
+  line-height: 1.1;
+}
+
+.workflow-line + p,
+.process-line + p,
+.flow-line + p {
+  margin-top: 0;
+}
+
+/* Panels: builder-style, tight, no float */
+.section,
+.textarea-card,
+.insight-card,
+.versions-panel,
+.positioning-panel,
+.version-grid article,
+.controls-panel,
+.selector-panel,
+.options-panel,
+.tool-options,
+.tool-controls,
+.change-preview,
+.output-panel,
+.preview-panel,
+.result-panel,
+footer,
+.footer,
+.site-footer {
+  width: 100%;
+  max-width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+  margin-bottom: var(--space-4);
+  padding: var(--space-4);
+  background: var(--color-surface);
+  border: var(--border-width) solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: none;
+}
+
+/* Selector panel behaves like SSML Builder settings card */
+.controls-panel,
+.selector-panel,
+.options-panel,
+.tool-options,
+.tool-controls {
+  display: grid;
+  gap: var(--space-3);
+}
+
+/* Direct select fallback stays aligned */
+.tool-shell > label,
+.tool-shell > select,
+main > label,
+main > select,
+.main > label,
+.main > select {
+  width: 100%;
+  max-width: none;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+/* Form tightening */
+.field,
+.textarea-block,
+.input-block {
+  gap: var(--space-1);
+}
+
+label,
+.label {
+  margin-bottom: 0;
+  font-size: 0.9rem;
+}
+
+.controls,
+.form-row,
+.button-row {
+  width: 100%;
+  max-width: none;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+/* Inputs like builder */
+textarea,
+input,
+select {
+  border-color: var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+input,
+select {
+  min-height: 2.35rem;
+  padding: 0.55rem 0.7rem;
+}
+
+textarea {
+  min-height: 150px;
+  padding: var(--space-3);
+}
+
+/* Stack raw and output vertically */
+.editor-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--space-4);
+}
+
+/* Button sizing closer to builder */
+.btn,
+.primary-btn,
+.secondary-btn,
+.warning-btn {
+  min-height: 2.15rem;
+  padding: 0.55rem 0.8rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.88rem;
+  box-shadow: none;
+}
+
+.primary-btn {
+  box-shadow: none;
+}
+
+/* Insight cards tighter and aligned */
+.insight-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+
+.insight-card {
+  min-height: 105px;
+  padding: var(--space-3);
+}
+
+/* Edit map and lower sections line up */
+.change-preview,
+.output-panel,
+.preview-panel,
+.result-panel {
+  padding: var(--space-3);
+}
+
+/* Footer/trust sections should feel like panels, not banners */
+footer,
+.footer,
+.site-footer {
+  text-align: left;
+}
+
+/* Terminal: stronger builder-style linework, less glow */
+html[data-theme="terminal"] {
+  --color-border: #00e88a;
+  --color-border-strong: #57ff8a;
+  --color-surface: #020806;
+  --color-surface-soft: #06130d;
+  --color-input-bg: #010403;
+  --color-input-readonly-bg: #06130d;
+}
+
+html[data-theme="terminal"] body {
+  text-shadow: none;
+}
+
+html[data-theme="terminal"] .section,
+html[data-theme="terminal"] .textarea-card,
+html[data-theme="terminal"] .insight-card,
+html[data-theme="terminal"] .versions-panel,
+html[data-theme="terminal"] .positioning-panel,
+html[data-theme="terminal"] .version-grid article,
+html[data-theme="terminal"] .controls-panel,
+html[data-theme="terminal"] .selector-panel,
+html[data-theme="terminal"] .options-panel,
+html[data-theme="terminal"] .tool-options,
+html[data-theme="terminal"] .tool-controls,
+html[data-theme="terminal"] .change-preview,
+html[data-theme="terminal"] .output-panel,
+html[data-theme="terminal"] .preview-panel,
+html[data-theme="terminal"] .result-panel,
+html[data-theme="terminal"] footer,
+html[data-theme="terminal"] .footer,
+html[data-theme="terminal"] .site-footer {
+  box-shadow: none;
+  border-color: var(--color-border);
+}
+
+html[data-theme="terminal"] textarea,
+html[data-theme="terminal"] input,
+html[data-theme="terminal"] select {
+  border-color: var(--color-border);
+  box-shadow: none;
+}
+
+/* Mobile */
+@media (max-width: 800px) {
+  .page,
+  .app,
+  .site-shell,
+  .tool-shell,
+  main,
+  .main,
+  .header,
+  .site-header,
+  footer,
+  .footer,
+  .site-footer {
+    width: min(100% - 0.9rem, var(--tool-max-width));
+  }
+
+  .insight-grid {
+    grid-template-columns: 1fr;
+  }
+
+  textarea {
+    min-height: 140px;
+  }
+}
