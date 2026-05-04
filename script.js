@@ -296,9 +296,10 @@ function cleanSpacing(text) {
     .replace(/[ \t]{2,}/g, " ")
     .replace(/\s+([,.;!?])/g, "$1")
     .replace(/([,.;!?])(?=\S)/g, "$1 ")
+    .replace(/\s+(["”'])(?=\s|$|[.,!?])/g, "$1")
+    .replace(/([.!?])(["”'])(?=\S)/g, "$1$2 ")
     .replace(/\.\s*\./g, ".")
     .replace(/,\s*,/g, ",")
-    .replace(/\s+([”"'])/g, "$1")
     .trim();
 }
 
