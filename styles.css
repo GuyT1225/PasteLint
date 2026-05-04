@@ -2120,3 +2120,40 @@ html[data-theme="terminal"] select {
   background: transparent;
   border: 1px solid var(--accent);
 }
+/* ================================
+   Cleaner tool intro
+================================ */
+
+.workflow-card,
+.workflow-note {
+  display: none;
+}
+
+.tool-intro {
+  max-width: 760px;
+  margin: 2rem auto 1rem;
+  text-align: center;
+}
+
+.tool-intro .eyebrow {
+  margin: 0 0 0.45rem;
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.68;
+}
+
+.tool-intro h2 {
+  margin: 0;
+  font-size: clamp(1.5rem, 3vw, 2.15rem);
+  line-height: 1.1;
+}
+
+.tool-intro p {
+  max-width: 650px;
+  margin: 0.7rem auto 0;
+  font-size: 0.98rem;
+  line-height: 1.55;
+  opacity: 0.78;
+}
