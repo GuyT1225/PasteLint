@@ -132,6 +132,13 @@ html[data-theme="dark"] {
   --color-input-readonly-bg: #171717;
 
   --shadow-focus: 0 0 0 3px rgba(96, 165, 250, 0.25);
+     --bg: var(--color-bg);
+  --text: var(--color-text);
+  --muted: var(--color-text-muted);
+  --border: var(--color-border);
+  --panel: var(--color-surface);
+  --surface: var(--color-input-bg);
+  --accent: var(--color-primary);
 }
 
 /* =========================
@@ -184,6 +191,13 @@ html[data-theme="terminal"] {
   --color-input-readonly-bg: #06130d;
 
   --shadow-focus: 0 0 0 2px rgba(87, 255, 138, 0.4);
+   --bg: var(--color-bg);
+  --text: var(--color-text);
+  --muted: var(--color-text-muted);
+  --border: var(--color-border);
+  --panel: var(--color-surface);
+  --surface: var(--color-input-bg);
+  --accent: var(--color-primary);
 }
 
 /* =========================
