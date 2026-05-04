@@ -3619,3 +3619,23 @@ select {
   font-size: 13px;
   color: var(--muted);
 }
+.tool-nav {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  font-size: 0.85rem;
+}
+
+.tool-nav a {
+  color: var(--muted);
+  text-decoration: none;
+}
+
+.tool-nav a:hover {
+  color: var(--text);
+  text-decoration: underline;
+}
+
+.site-header {
+  gap: 24px;
+}
