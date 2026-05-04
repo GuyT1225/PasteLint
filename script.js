@@ -285,6 +285,30 @@ function handleRewrite(els) {
    CLEAN ENGINE
 ----------------------------- */
 
+function normalizeDBNumbers(text) {
+  return text.replace(/\bDB\s*[- ]?(\d(?:[- ]?\d){5})\b/gi, (_, digits) => {
+    return "DB " + digits.replace(/\D/g, "").split("").join("-");
+  });
+}
+
+function cleanSpacing(text) {
+  return text
+    .replace(/[ \t]{2,}/g, " ")
+    .replace(/\s+([,.;!?])/g, "$1")
+    .replace(/([,.;!?])(?=\S)/g, "$1 ")
+    .replace(/\.\s*\./g, ".")
+    .replace(/,\s*,/g, ",")
+    .trim();
+}
+
+function cleanBookText(text) {
+  return text
+    .replace(/[“”]/g, '"')
+    .replace(/[‘’]/g, "'")
+    .replace(/&/g, "and")
+    .replace(/@/g, "at");
+}
+
 function cleanText(text, mode = "paragraph") {
   let cleaned = text;
   const edits = [];
@@ -294,8 +318,15 @@ function cleanText(text, mode = "paragraph") {
     lines: 0,
     punctuation: 0,
     typos: 0,
-    repeatedWords: 0
+    repeatedWords: 0,
+    dbNumbers: 0
   };
+
+  const beforeDB = cleaned;
+  cleaned = normalizeDBNumbers(cleaned);
+  if (cleaned !== beforeDB) impact.dbNumbers++;
+
+  cleaned = cleanBookText(cleaned);
 
   cleaned = cleaned.replace(/[ \t]{2,}/g, () => {
     impact.spaces++;
@@ -311,6 +342,8 @@ function cleanText(text, mode = "paragraph") {
     impact.punctuation++;
     return punctuation;
   });
+
+  cleaned = cleanSpacing(cleaned);
 
   const typoResult = fixCommonTypos(cleaned);
   cleaned = typoResult.text;
@@ -329,6 +362,7 @@ function cleanText(text, mode = "paragraph") {
     impact,
     edits,
     changes: [
+      impact.dbNumbers && "Normalized DB numbers",
       impact.spaces && "Collapsed extra spaces",
       impact.lines && "Reduced excessive line breaks",
       impact.punctuation && "Fixed punctuation spacing",
@@ -338,6 +372,22 @@ function cleanText(text, mode = "paragraph") {
       mode === "paragraph" && "Grouped text into readable paragraphs"
     ].filter(Boolean)
   };
+}
+
+function applyCleanMode(text, mode) {
+  if (mode === "line") {
+    return text
+      .split("\n")
+      .map(line => cleanSpacing(line))
+      .filter(Boolean)
+      .join("\n");
+  }
+
+  return text
+    .split(/\n+/)
+    .map(line => cleanSpacing(line))
+    .filter(Boolean)
+    .join("\n\n");
 }
 
 function applyCleanMode(text, mode) {
@@ -449,6 +499,7 @@ function renderImpact(els, impact) {
   if (impact.spaces) parts.push("Removed extra spaces");
   if (impact.lines) parts.push("Reduced line breaks");
   if (impact.punctuation) parts.push("Fixed punctuation spacing");
+  if (impact.dbNumbers) parts.push("Normalized DB numbers");
 
   if (impact.typos) {
     parts.push(`Fixed ${impact.typos} common typo${impact.typos === 1 ? "" : "s"}`);
