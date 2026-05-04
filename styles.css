@@ -2074,3 +2074,49 @@ html[data-theme="terminal"] select {
     min-height: 340px;
   }
 }
+/* ================================
+   Workflow explainer card
+================================ */
+
+.workflow-card {
+  max-width: 760px;
+  margin: 2rem auto 1.25rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.65rem;
+  flex-wrap: wrap;
+  background: var(--panel);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.08);
+}
+
+.workflow-step {
+  font-size: 0.86rem;
+  font-weight: 700;
+  opacity: 0.72;
+  padding: 0.45rem 0.65rem;
+  border-radius: 999px;
+}
+
+.workflow-step.active {
+  opacity: 1;
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.workflow-arrow {
+  opacity: 0.35;
+  font-weight: 700;
+}
+
+[data-theme="terminal"] .workflow-card {
+  box-shadow: none;
+}
+
+[data-theme="terminal"] .workflow-step.active {
+  background: transparent;
+  border: 1px solid var(--accent);
+}
