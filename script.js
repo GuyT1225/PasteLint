@@ -293,12 +293,13 @@ function normalizeDBNumbers(text) {
 
 function cleanSpacing(text) {
   return text
-    .replace(/[ \t]{2,}/g, " ")
-    .replace(/\s+([,.;!?])/g, "$1")
-    .replace(/([,.;!?])(?=\S)/g, "$1 ")
-    .replace(/\.\s*\./g, ".")
+  .replace(/[ \t]+/g, " ")
+    .replace(/\n{3,}/g, "\n\n")
+    .replace(/\s+([.,!?])/g, "$1")
+    .replace(/([.,!?])(?=\S)/g, "$1 ")
     .replace(/,\s*,/g, ",")
-    .replace(/\s+$/g, "")
+    .replace(/\.\s*\./g, ".")
+    .replace(/(\d+)\s+hours?\s*,?\s*(\d+)\s+minutes?/gi, "$1 hours, $2 minutes")
     .replace(/([A-Za-z0-9])$/g, "$1.")
     .trim();
 }
@@ -315,8 +316,8 @@ function formatTalkingBookEntry(text) {
   text = cleanBookText(text);
   text = normalizeDBNumbers(text);
 
-  const pattern =
-    /^(.+?)\s+DB\s?(\d[\d-]*)\s+(\d+)\s+hours?\s+(\d+)\s+minutes?\s+by\s+(.+?)\.\s*Read by\s+(.+?)\.\s*["“]?(.+?)["”]?\s*[-–—]\s*From publisher\.\s*(.+?)\s+DB\s?(\d[\d-]*)\s+(.+?)\.?$/is;
+ const pattern =
+  /^(.+?)\s+DB\s?(\d[\d-]*)\s+(\d+)\s+hours?\s+(\d+)\s+minutes?\s+by\s+(.+?)\.\s*Read by\s+(.+?)(?:\.\s*|\s+)["“]?(.+?)["”]?\s*[-–—]\s*From publisher\.\s*(.+?)\s+DB\s?(\d[\d-]*)\s+(.+?)\.?$/is;
 
   if (!pattern.test(text)) {
     return cleanSpacing(text);
