@@ -296,10 +296,10 @@ function cleanSpacing(text) {
     .replace(/[ \t]{2,}/g, " ")
     .replace(/\s+([,.;!?])/g, "$1")
     .replace(/([,.;!?])(?=\S)/g, "$1 ")
-    .replace(/\s+(["”'])(?=\s|$|[.,!?])/g, "$1")
-    .replace(/([.!?])(["”'])(?=\S)/g, "$1$2 ")
     .replace(/\.\s*\./g, ".")
     .replace(/,\s*,/g, ",")
+    .replace(/\s+$/g, "")
+    .replace(/([A-Za-z0-9])$/g, "$1.")
     .trim();
 }
 
@@ -309,6 +309,53 @@ function cleanBookText(text) {
     .replace(/[‘’]/g, "'")
     .replace(/&/g, "and")
     .replace(/@/g, "at");
+}
+
+function formatTalkingBookEntry(text) {
+  text = cleanBookText(text);
+  text = normalizeDBNumbers(text);
+
+  const pattern =
+    /^(.+?)\s+DB\s?(\d[\d-]*)\s+(\d+)\s+hours?\s+(\d+)\s+minutes?\s+by\s+(.+?)\.\s*Read by\s+(.+?)\.\s*["“]?(.+?)["”]?\s*[-–—]\s*From publisher\.\s*(.+?)\s+DB\s?(\d[\d-]*)\s+(.+?)\.?$/is;
+
+  if (!pattern.test(text)) {
+    return cleanSpacing(text);
+  }
+
+  return text.replace(
+    pattern,
+    function (
+      match,
+      title,
+      dbDigits,
+      hours,
+      minutes,
+      authors,
+      narrator,
+      description,
+      ending,
+      endingDb,
+      endingTitle
+    ) {
+      const formattedDB = "DB " + dbDigits.replace(/-/g, "").split("").join("-");
+
+      title = title.trim().replace(/[.,]+$/, "");
+      description = description.trim().replace(/^["“]/, "").replace(/["”]$/, "");
+      ending = ending.trim().replace(/\.$/, "");
+      endingTitle = endingTitle.trim().replace(/[.,]+$/, "");
+
+      return (
+        title + ", " + formattedDB + ". " +
+        hours + " hours, " + minutes + " minutes, by " +
+        authors.trim() + ". Read by " +
+        narrator.trim() + '. "' +
+        description + '"\n\nFrom publisher. ' +
+        ending + ". " +
+        formattedDB + ". " +
+        endingTitle + "."
+      );
+    }
+  );
 }
 
 function cleanText(text, mode = "paragraph") {
@@ -329,6 +376,7 @@ function cleanText(text, mode = "paragraph") {
   if (cleaned !== beforeDB) impact.dbNumbers++;
 
   cleaned = cleanBookText(cleaned);
+  cleaned = formatTalkingBookEntry(cleaned);
 
   cleaned = cleaned.replace(/[ \t]{2,}/g, () => {
     impact.spaces++;
@@ -374,22 +422,6 @@ function cleanText(text, mode = "paragraph") {
       mode === "paragraph" && "Grouped text into readable paragraphs"
     ].filter(Boolean)
   };
-}
-
-function applyCleanMode(text, mode) {
-  if (mode === "line") {
-    return text
-      .split("\n")
-      .map(line => cleanSpacing(line))
-      .filter(Boolean)
-      .join("\n");
-  }
-
-  return text
-    .split(/\n+/)
-    .map(line => cleanSpacing(line))
-    .filter(Boolean)
-    .join("\n\n");
 }
 
 function applyCleanMode(text, mode) {
