@@ -169,66 +169,67 @@
       return text.replace(/[<>]/g, "").replace(/[{}[\]|\\^~`]/g, "");
     }
 
-    function formatTalkingBookEntry(text) {
-      const categoryLines = [];
+  function formatTalkingBookEntry(text) {
+  text = text
+    .replace(/\bDB\s?(\d{6})\b/gi, (_, digits) => {
+      return "DB " + digits.split("").join("-");
+    });
 
-      text = text
-        .split("\n")
-        .map(line => line.trim())
-        .filter(Boolean)
-        .filter(function (line) {
-          const isShort = line.length < 80;
-          const hasDB = /\bDB\s?\d/i.test(line);
-          if (isShort && !hasDB) {
-            categoryLines.push(line.replace(/\.$/, "") + ".");
-            return false;
-          }
-          return true;
-        })
-        .join(" ");
+  const pattern =
+    /^(.+?)\s+DB\s?(\d[\d-]*)\s+(\d+)\s+hours?\s+(\d+)\s+minutes?\s+by\s+(.+?)\.\s*Read by\s+(.+?)\.\s*["“]?(.+?)["”]?\s*[-–—]\s*From publisher\.\s*(.+?)\s+DB\s?(\d[\d-]*)\s+(.+?)\.?$/is;
 
-      text = text.replace(/^(.+?),\s*,\s*DB/i, "$1 DB");
+  if (!pattern.test(text)) {
+    return text;
+  }
 
-      const pattern = /^(.+?)\s+DB\s?(\d[\d-]*)\.?\s+(\d+\s*hours?,\s*\d+\s*minutes?),\s*by\s+(.+?)\.\s*Read by\s+(.+?)\.\s*["“]?(.+?)["”]?\s*[-–—]?\s*From publisher\.\s*(.+?)\s+DB\s?(\d[\d-]*)\.?\s+(.+?)\.?$/is;
+  return text.replace(
+    pattern,
+    function (
+      match,
+      title,
+      dbDigits,
+      hours,
+      minutes,
+      authors,
+      narrator,
+      description,
+      ending,
+      endingDb,
+      endingTitle
+    ) {
+      const formattedDB = "DB " + dbDigits.replace(/-/g, "").split("").join("-");
 
-      if (!pattern.test(text)) {
-        return (categoryLines.length ? categoryLines.join("\n") + "\n" : "") + text;
-      }
+      title = title.trim().replace(/[.,]+$/, "");
+      description = description.trim().replace(/^["“]/, "").replace(/["”]$/, "");
+      ending = ending.trim().replace(/\.$/, "");
+      endingTitle = endingTitle.trim().replace(/[.,]+$/, "");
 
-      const formatted = text.replace(pattern, function (match, title, dbDigits, duration, authors, narrator, description, ending) {
-        const formattedDB = "DB " + dbDigits.replace(/-/g, "").split("").join("-");
-        title = title.trim().replace(/,\s*$/, " ").trim();
-        description = description.trim().replace(/^["“]/g, "").replace(/["”]$/g, "");
-        ending = ending.trim().replace(/\.$/, "");
-
-        return title + ", " + formattedDB + ". " +
-          duration.trim() + ", by " +
-          authors.trim() + ". Read by " +
-          narrator.trim() + '. "' +
-          description + '"\n\nFrom publisher. ' +
-          ending + ". " +
-          formattedDB + ". " +
-          title + ".";
-      });
-
-      return (categoryLines.length ? categoryLines.join("\n") + "\n" : "") + formatted;
+      return (
+        title + ", " + formattedDB + ". " +
+        hours + " hours, " + minutes + " minutes, by " +
+        authors.trim() + ". Read by " +
+        narrator.trim() + '. "' +
+        description + '"\n\nFrom publisher. ' +
+        ending + ". " +
+        formattedDB + ". " +
+        endingTitle + "."
+      );
     }
-
-    function cleanSpacing(text) {
-      return text
-        .replace(/[ \t]+/g, " ")
-        .replace(/\n{3,}/g, "\n\n")
-        .replace(/\s+([.,!?])/g, "$1")
-        .replace(/([.,!?])(?=\S)/g, "$1 ")
-        .replace(/,\s*,/g, ",")
-        .replace(/\.\s*\./g, ".")
-        .replace(/"\s*-\s*/g, '" ')
-        .replace(/\s+-\s+From publisher/gi, " From publisher")
-        .replace(/\bDB\s?(\d[\d-]*)\./g, function (match, digits) {
-          return "DB " + digits.replace(/-/g, "").split("").join("-") + ".";
-        })
-        .trim();
-    }
+  );
+}
+function cleanSpacing(text) {
+  return text
+    .replace(/[ \t]+/g, " ")
+    .replace(/\n{3,}/g, "\n\n")
+    .replace(/\s+([.,!?])/g, "$1")
+    .replace(/([.,!?])(?=\S)/g, "$1 ")
+    .replace(/,\s*,/g, ",")
+    .replace(/\.\s*\./g, ".")
+    .replace(/(\d+)\s+hours?\s+(\d+)\s+minutes?/gi, "$1 hours, $2 minutes")
+    .replace(/\s+by\s+/gi, ", by ")
+    .replace(/([A-Za-z0-9])$/g, "$1.")
+    .trim();
+}
 
     function cleanText(text) {
       text = fixSpecialCharacters(text);
