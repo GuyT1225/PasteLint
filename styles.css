@@ -3610,3 +3610,66 @@ select {
 .site-header {
   gap: 24px;
 }
+/* =========================
+   RESPONSIVE GLOBAL HEADER
+   ========================= */
+
+.site-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  flex-wrap: wrap;
+}
+
+.brand {
+  flex: 0 0 auto;
+}
+
+.tool-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  flex: 1 1 auto;
+  font-size: 0.85rem;
+}
+
+.tool-nav a {
+  color: var(--muted);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.tool-nav a:hover,
+.tool-nav a:focus {
+  color: var(--text);
+  text-decoration: underline;
+}
+
+.theme-switcher {
+  flex: 0 0 auto;
+}
+
+@media (max-width: 760px) {
+  .site-header {
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .brand,
+  .tool-nav,
+  .theme-switcher {
+    width: 100%;
+  }
+
+  .tool-nav {
+    justify-content: flex-start;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .theme-switcher {
+    justify-content: flex-start;
+  }
+}
