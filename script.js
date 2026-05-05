@@ -313,17 +313,37 @@ function cleanBookText(text) {
 }
 
 function formatTalkingBookEntry(text) {
-  text = cleanBookText(text);
-  text = normalizeDBNumbers(text);
+  const categoryLines = [];
 
- const pattern =
-  /^(.+?)\s+DB\s?(\d[\d-]*)\s+(\d+)\s+hours?\s+(\d+)\s+minutes?\s+by\s+(.+?)\.\s*Read by\s+(.+?)\s+["“](.+?)["”]?\s*[-–—]\s*From publisher\.\s*(.+?)\s+DB\s?(\d[\d-]*)\s+(.+?)\.?$/is;
+  text = text
+    .split("\n")
+    .map(line => line.trim())
+    .filter(Boolean)
+    .filter(function (line) {
+      const isShort = line.length < 90;
+      const hasDB = /\bDB\s?\d/i.test(line);
+
+      if (isShort && !hasDB) {
+        categoryLines.push(line.replace(/[.,]+$/, "") + ".");
+        return false;
+      }
+
+      return true;
+    })
+    .join(" ");
+
+  text = text.replace(/\bDB\s?(\d{6})\b/gi, function (_, digits) {
+    return "DB " + digits.split("").join("-");
+  });
+
+  const pattern =
+    /^(.+?)\s+DB\s?(\d[\d-]*)\s+(\d+)\s+hours?\s+(\d+)\s+minutes?\s+by\s+(.+?)\.\s*Read by\s+(.+?)\s+"(.+?)"\s*-\s*From publisher\.\s*(.+?)\s+DB\s?(\d[\d-]*)\s+(.+?)\.?$/is;
 
   if (!pattern.test(text)) {
-    return cleanSpacing(text);
+    return (categoryLines.length ? categoryLines.join("\n") + "\n" : "") + text;
   }
 
-  return text.replace(
+  const formatted = text.replace(
     pattern,
     function (
       match,
@@ -340,25 +360,22 @@ function formatTalkingBookEntry(text) {
     ) {
       const formattedDB = "DB " + dbDigits.replace(/-/g, "").split("").join("-");
 
-      title = title.trim().replace(/[.,]+$/, "");
-      description = description.trim().replace(/^["“]/, "").replace(/["”]$/, "");
-      ending = ending.trim().replace(/\.$/, "");
-      endingTitle = endingTitle.trim().replace(/[.,]+$/, "");
-
       return (
-        title + ", " + formattedDB + ". " +
+        title.trim().replace(/[.,]+$/, "") + ", " +
+        formattedDB + ". " +
         hours + " hours, " + minutes + " minutes, by " +
         authors.trim() + ". Read by " +
-        narrator.trim() + '. "' +
-        description + '"\n\nFrom publisher. ' +
-        ending + ". " +
+        narrator.trim().replace(/[.,]+$/, "") + '. "' +
+        description.trim() + '"\n\nFrom publisher. ' +
+        ending.trim().replace(/\.$/, "") + ". " +
         formattedDB + ". " +
-        endingTitle + "."
+        endingTitle.trim().replace(/[.,]+$/, "") + "."
       );
     }
   );
-}
 
+  return (categoryLines.length ? categoryLines.join("\n") + "\n" : "") + formatted;
+}
 function cleanText(text, mode = "paragraph") {
   let cleaned = text;
   const edits = [];
