@@ -292,15 +292,16 @@
             endingTitle = endingTitle.trim().replace(/[.,]+$/, "");
 
             return (
-              title + ", " + formattedDB + ". " +
-              hours + " hours, " + minutes + " minutes, by " +
-              authors.trim() + ". Read by " +
-              narrator.trim() + '. "' +
-              description + '"\n\nFrom publisher. ' +
-              ending + ". " +
-              formattedDB + ". " +
-              endingTitle + "."
-            );
+  title.trim().replace(/[.,]+$/, "") + ", " +
+  formattedDB + ". " +
+  hours + " hours, " + minutes + " minutes, by " +
+  authors.trim().replace(/[.,]+$/, "") + ". Read by " +
+  narrator.trim().replace(/[.,]+$/, "") + '. "' +
+  description.trim().replace(/\s+$/, "") + '"\n\nFrom publisher. ' +
+  ending.trim().replace(/\.$/, "") + ". " +
+  formattedDB + ". " +
+  endingTitle.trim().replace(/[.,]+$/, "") + "."
+);
           }
         );
       }
