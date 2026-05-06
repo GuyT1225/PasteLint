@@ -293,15 +293,10 @@ function normalizeDBNumbers(text) {
 
 function cleanSpacing(text) {
   return text
-  .replace(/[ \t]+/g, " ")
+   .replace(/[ \t]+/g, " ")
+    .replace(/\s*\.\s*\.\s*\.\s*/g, " ... ")
     .replace(/\n{3,}/g, "\n\n")
     .replace(/\s+([.,!?])/g, "$1")
-    .replace(/([.,!?])(?=\S)/g, "$1 ")
-    .replace(/,\s*,/g, ",")
-    .replace(/\.\s*\./g, ".")
-    .replace(/(\d+)\s+hours?\s*,?\s*(\d+)\s+minutes?/gi, "$1 hours, $2 minutes")
-    .replace(/([A-Za-z0-9])$/g, "$1.")
-    .trim();
 }
 
 function cleanBookText(text) {
