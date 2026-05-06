@@ -542,39 +542,75 @@ function fixPauseArtifacts(text) {
       return units;
     }
 
-    function splitIntoBookAwareChunks(text, limit) {
-      const units = splitIntoBookAwareUnits(text);
-      const chunks = [];
-      let current = "";
+   function splitIntoBookAwareChunks(text, limit) {
+  const units = splitIntoBookAwareUnits(text);
+  const chunks = [];
+  let current = "";
+  let pendingHeading = "";
 
-      units.forEach(function (unit) {
-        const candidate = current ? current + "\n\n" + unit : unit;
+  function isStandaloneHeading(text) {
+    return /^[A-Z][A-Za-z0-9 and,&'’:-]{2,80}\.$/.test(text.trim()) && !/\bDB\s?\d/i.test(text);
+  }
 
-        if (candidate.length <= limit) {
-          current = candidate;
-          return;
-        }
+  function pushCurrentChunk() {
+    if (!current.trim()) return;
 
-        if (current) {
-          chunks.push(current);
-          current = "";
-        }
+    const parts = current
+      .split(/\n\s*\n+/)
+      .map(function (part) {
+        return part.trim();
+      })
+      .filter(Boolean);
 
-        if (unit.length <= limit) {
-          current = unit;
-        } else {
-          splitLongText(unit, limit).forEach(function (part) {
-            if (part.length <= limit) {
-              chunks.push(part);
-            }
-          });
+    const lastPart = parts[parts.length - 1];
+
+    if (lastPart && isStandaloneHeading(lastPart) && parts.length > 1) {
+      pendingHeading = lastPart;
+      parts.pop();
+      current = parts.join("\n\n").trim();
+    }
+
+    if (current.trim()) {
+      chunks.push(current.trim());
+    }
+
+    current = "";
+  }
+
+  units.forEach(function (unit) {
+    if (pendingHeading) {
+      unit = pendingHeading + "\n\n" + unit;
+      pendingHeading = "";
+    }
+
+    const candidate = current ? current + "\n\n" + unit : unit;
+
+    if (candidate.length <= limit) {
+      current = candidate;
+      return;
+    }
+
+    pushCurrentChunk();
+
+    if (unit.length <= limit) {
+      current = unit;
+    } else {
+      splitLongText(unit, limit).forEach(function (part) {
+        if (part.length <= limit) {
+          chunks.push(part);
         }
       });
-
-      if (current) chunks.push(current);
-
-      return chunks;
     }
+  });
+
+  pushCurrentChunk();
+
+  if (pendingHeading) {
+    chunks.push(pendingHeading);
+  }
+
+  return chunks;
+}
 
     function generateChunks(wasRedirected) {
       const cleaned = buildFullCleanText();
