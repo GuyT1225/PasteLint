@@ -241,20 +241,6 @@ function handleClean(els) {
   updateCounters(els);
 }
 
-function handleRewrite(els) {
-  const source = getSourceForRewrite(els);
-  if (!source) return;
-
-  const versions = generateVersions(source);
-
-  setOutput(els, versions[0].text);
-  renderVersions(els, versions);
-  renderImpact(els, versions[0].impact);
-  renderChanges(els, versions[0].changes);
-  renderEditPreview(els, []);
-  updateCounters(els);
-}
-
 function cleanText(text, mode = "paragraph") {
   let cleaned = text;
   const edits = [];
