@@ -445,6 +445,7 @@ function applySecondDraftPhraseRules(text, tone) {
     ["due to the fact that", "because", "Simplified wordy phrasing"],
     ["in order to", "to", "Simplified wordy phrasing"],
     ["for the purpose of", "to", "Simplified wordy phrasing"],
+    ["At this point in time", "Now", "Simplified time phrasing"],
     ["at this point in time", "now", "Simplified time phrasing"],
     ["utilize", "use", "Simplified formal wording"],
     ["assistance", "help", "Made wording more natural"],
