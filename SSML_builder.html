@@ -10,7 +10,8 @@
 </head>
 
 <body>
-  <header class="site-header">
+  <header 
+    class="site-header">
     <a class="brand-link" href="index.html">PasteLint</a>
 
     <nav class="tool-nav" aria-label="Tool navigation">
@@ -172,18 +173,7 @@
       updateCounters();
     });
 
-    function bindThemeButtons() {
-      const savedTheme = localStorage.getItem("pastelint-theme") || "light";
-      applyTheme(savedTheme);
-
-      document.querySelectorAll("[data-theme-choice]").forEach(function (button) {
-        button.addEventListener("click", function () {
-          const theme = button.getAttribute("data-theme-choice");
-          applyTheme(theme);
-          localStorage.setItem("pastelint-theme", theme);
-        });
-      });
-    }
+  
 
     function applyTheme(theme) {
       document.documentElement.setAttribute("data-theme", theme);
