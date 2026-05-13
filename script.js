@@ -1,13 +1,8 @@
 document.addEventListener("DOMContentLoaded", () => {
   const els = getElements();
-  const draftEls = getSecondDraftElements();
-
-  bindEvents(els);
-  bindSecondDraftEvents(draftEls);
   
-
+  bindEvents(els);
   updateCounters(els);
-  updateDraftCounters(draftEls);
 });
 
 /* -----------------------------
@@ -53,37 +48,7 @@ function getElements() {
   };
 }
 
-/* -----------------------------
-   ELEMENTS - SECONDDRAFT
------------------------------ */
 
-function getSecondDraftElements() {
-  return {
-    input: $("draftInput"),
-    output: $("draftOutput"),
-
-    toneSelect: $("toneSelect"),
-    lengthSelect: $("lengthSelect"),
-    reflowToggle: $("reflowToggle"),
-
-    reviseBtn: $("reviseBtn"),
-    copyBtn: $("copyBtn"),
-    clearBtn: $("clearBtn"),
-
-    inputCharCount: $("inputCharCount"),
-    inputWordCount: $("inputWordCount"),
-    outputCharCount: $("outputCharCount"),
-    outputWordCount: $("outputWordCount"),
-
-    qualityHint: $("qualityHint"),
-
-    changeInsightEmpty: $("changeInsightEmpty"),
-    changeInsightList: $("changeInsightList"),
-
-    editMapEmpty: $("editMapEmpty"),
-    editMapList: $("editMapList")
-  };
-}
 
 /* -----------------------------
    EVENTS - PASTELINT
@@ -111,22 +76,6 @@ function bindEvents(els) {
   });
 }
 
-/* -----------------------------
-   EVENTS - SECONDDRAFT
------------------------------ */
-
-function bindSecondDraftEvents(els) {
-  if (!els.input && !els.output) return;
-
-  els.input?.addEventListener("input", () => {
-    updateDraftCounters(els);
-    renderDraftQualityHint(els);
-  });
-
-  els.reviseBtn?.addEventListener("click", () => handleSecondDraftRevise(els));
-  els.copyBtn?.addEventListener("click", () => copySecondDraftOutput(els));
-  els.clearBtn?.addEventListener("click", () => clearSecondDraft(els));
-}
 
 
 /* -----------------------------
@@ -377,169 +326,6 @@ function applyCleanMode(text, mode) {
     .join("\n\n");
 }
 
-/* -----------------------------
-   SECONDDRAFT ENGINE
------------------------------ */
-
-function handleSecondDraftRevise(els) {
-  const raw = els.input?.value.trim() || "";
-  if (!raw) return;
-
-  const options = getSecondDraftOptions(els);
-  const result = reviseSecondDraft(raw, options);
-
-  if (els.output) els.output.value = result.text;
-
-  renderSecondDraftInsights(els, result.changes);
-  renderSecondDraftEditMap(els, result.edits);
-  updateDraftCounters(els);
-}
-
-function getSecondDraftOptions(els) {
-  return {
-    tone: els.toneSelect?.value || "natural",
-    length: els.lengthSelect?.value || "similar",
-    reflow: Boolean(els.reflowToggle?.checked)
-  };
-}
-
-function reviseSecondDraft(text, options) {
-  let revised = normalizeRewrite(text);
-  const edits = [];
-  const changes = [];
-
-  const phraseResult = applySecondDraftPhraseRules(revised, options.tone);
-  revised = phraseResult.text;
-  edits.push(...phraseResult.edits);
-  changes.push(...phraseResult.changes);
-
-  const lengthResult = applyLengthPreference(revised, options.length);
-  revised = lengthResult.text;
-  changes.push(...lengthResult.changes);
-
-  if (options.reflow) {
-    revised = reflowParagraphs(revised);
-    changes.push("Reflowed text into cleaner paragraphs");
-  }
-
-  revised = normalizeRewrite(revised);
-
-  if (!changes.length) {
-    changes.push("Light clarity pass applied");
-  }
-
-  return {
-    text: revised,
-    changes: unique(changes),
-    edits
-  };
-}
-
-function applySecondDraftPhraseRules(text, tone) {
-  let revised = text;
-  const edits = [];
-  const changes = [];
-
-  const rules = [
-    ["It is important to note that", "", "Removed unnecessary opening phrase"],
-    ["due to the fact that", "because", "Simplified wordy phrasing"],
-    ["in order to", "to", "Simplified wordy phrasing"],
-    ["for the purpose of", "to", "Simplified wordy phrasing"],
-    ["At this point in time", "Now", "Simplified time phrasing"],
-    ["at this point in time", "now", "Simplified time phrasing"],
-    ["utilize", "use", "Simplified formal wording"],
-    ["assistance", "help", "Made wording more natural"],
-    ["facilitate", "help", "Made wording more direct"],
-    ["with regard to", "about", "Simplified formal wording"],
-    ["prior to", "before", "Simplified formal wording"]
-  ];
-
-  if (tone === "direct") {
-    rules.push(
-      ["I would like to", "", "Made the wording more direct"],
-      ["It seems that", "", "Removed hesitant phrasing"],
-      ["Please be advised that", "", "Removed overly formal phrasing"]
-    );
-  }
-
-  if (tone === "professional") {
-    rules.push(
-      ["a lot of", "many", "Made wording more professional"],
-      ["get", "receive", "Adjusted casual wording"]
-    );
-  }
-
-  if (tone === "friendly") {
-    rules.push(
-      ["receive", "get", "Made wording more conversational"],
-      ["assist", "help", "Made wording warmer"]
-    );
-  }
-
-  rules.forEach(([before, after, change]) => {
-    const result = replacePhraseWithEdit(revised, before, after);
-    revised = result.text;
-
-    if (result.count > 0) {
-      changes.push(change);
-      edits.push(...result.edits);
-    }
-  });
-
-  return { text: revised, edits, changes };
-}
-
-function replacePhraseWithEdit(text, before, after) {
-  const edits = [];
-  const pattern = new RegExp(`\\b${escapeRegExp(before)}\\b`, "gi");
-
-  let count = 0;
-  const updated = text.replace(pattern, match => {
-    count++;
-    edits.push({
-      before: match,
-      after: after || "[removed]"
-    });
-
-    return after;
-  });
-
-  return { text: updated, count, edits };
-}
-
-function applyLengthPreference(text, length) {
-  const changes = [];
-  let revised = text;
-
-  if (length === "shorter") {
-    const before = revised;
-    revised = revised
-      .replace(/\bvery\b/gi, "")
-      .replace(/\breally\b/gi, "")
-      .replace(/\bbasically\b/gi, "")
-      .replace(/\bactually\b/gi, "")
-      .replace(/[ \t]{2,}/g, " ")
-      .trim();
-
-    if (before !== revised) {
-      changes.push("Removed filler to make the text shorter");
-    }
-  }
-
-  if (length === "expand") {
-    changes.push("Kept meaning intact while allowing a slightly fuller revision");
-  }
-
-  return { text: revised, changes };
-}
-
-function reflowParagraphs(text) {
-  return text
-    .split(/\n+/)
-    .map(line => line.trim())
-    .filter(Boolean)
-    .join("\n\n");
-}
 
 /* -----------------------------
    SHARED REWRITE HELPERS
@@ -683,58 +469,6 @@ function renderVersions(els, versions) {
   });
 }
 
-/* -----------------------------
-   SECONDDRAFT RENDERING
------------------------------ */
-
-function renderDraftQualityHint(els) {
-  if (!els.qualityHint) return;
-
-  const text = els.input?.value.trim() || "";
-
-  if (!text) {
-    els.qualityHint.textContent = "Paste text to revise.";
-    return;
-  }
-
-  const issues = detectIssues(text);
-
-  els.qualityHint.textContent = issues.length
-    ? `Detected: ${issues.join(", ")}.`
-    : "Looks ready for a light clarity pass.";
-}
-
-function renderSecondDraftInsights(els, changes) {
-  if (els.changeInsightEmpty) {
-    els.changeInsightEmpty.hidden = Boolean(changes && changes.length);
-  }
-
-  if (!els.changeInsightList) return;
-
-  els.changeInsightList.innerHTML = changes && changes.length
-    ? changes.map(change => `<li>${escapeHTML(change)}</li>`).join("")
-    : "";
-}
-
-function renderSecondDraftEditMap(els, edits) {
-  if (els.editMapEmpty) {
-    els.editMapEmpty.hidden = Boolean(edits && edits.length);
-  }
-
-  if (!els.editMapList) return;
-
-  els.editMapList.innerHTML = edits && edits.length
-    ? edits.map(edit => {
-        return `
-          <li>
-            <span class="edit-before">${escapeHTML(edit.before)}</span>
-            <span class="edit-arrow">→</span>
-            <span class="edit-after">${escapeHTML(edit.after)}</span>
-          </li>
-        `;
-      }).join("")
-    : "";
-}
 
 /* -----------------------------
    COUNTERS
@@ -750,15 +484,7 @@ function updateCounters(els) {
   setText(els.outputWordCount, `${countWords(output)} words`);
 }
 
-function updateDraftCounters(els) {
-  const input = els.input?.value || "";
-  const output = els.output?.value || "";
 
-  setText(els.inputCharCount, `${input.length} chars`);
-  setText(els.inputWordCount, `${countWords(input)} words`);
-  setText(els.outputCharCount, `${output.length} chars`);
-  setText(els.outputWordCount, `${countWords(output)} words`);
-}
 
 function countWords(text) {
   return (text.trim().match(/\b\w+\b/g) || []).length;
@@ -777,14 +503,7 @@ function copyOutput(els) {
   });
 }
 
-function copySecondDraftOutput(els) {
-  if (!els.output?.value) return;
 
-  navigator.clipboard.writeText(els.output.value).catch(() => {
-    els.output.select();
-    document.execCommand("copy");
-  });
-}
 
 function clearAll(els) {
   if (els.input) els.input.value = "";
@@ -818,32 +537,7 @@ function clearAll(els) {
   }
 }
 
-function clearSecondDraft(els) {
-  if (els.input) els.input.value = "";
-  if (els.output) els.output.value = "";
 
-  updateDraftCounters(els);
-
-  if (els.qualityHint) {
-    els.qualityHint.textContent = "Paste text to revise.";
-  }
-
-  if (els.changeInsightEmpty) {
-    els.changeInsightEmpty.hidden = false;
-  }
-
-  if (els.changeInsightList) {
-    els.changeInsightList.innerHTML = "";
-  }
-
-  if (els.editMapEmpty) {
-    els.editMapEmpty.hidden = false;
-  }
-
-  if (els.editMapList) {
-    els.editMapList.innerHTML = "";
-  }
-}
 
 /* -----------------------------
    HELPERS
