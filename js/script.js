@@ -34,6 +34,7 @@ function getElements() {
     modeToggle: $("modeToggle"),
 
     issuePanel: $("analysisList", "foundList"),
+    textBrief: $("textBrief"),
     impactPanel: $("impactList"),
     changeSummary: $("improvementList"),
     changePreview: $("changePreview"),
@@ -260,6 +261,7 @@ function handleClean(els) {
 
   setOutput(els, result.text);
   runPreAnalysis(els);
+  renderTextBrief(els, result.text);
   
   renderImpact(els, result.impact);
   renderChanges(els, result.changes);
@@ -327,7 +329,33 @@ function renderEditPreview(els, edits) {
     .join("");
 }
 
+function renderTextBrief(els, text) {
+  if (!els.textBrief) return;
 
+  if (!text) {
+    els.textBrief.textContent =
+      "Paste text above, then clean it to see a quick summary of what PasteLint found.";
+    return;
+  }
+
+  if (
+    window.PasteLintAnalyzer &&
+    typeof window.PasteLintAnalyzer.analyzeText === "function"
+  ) {
+    const analysis = window.PasteLintAnalyzer.analyzeText(text);
+    const stats = analysis.stats || {};
+
+    els.textBrief.innerHTML = `
+      ${stats.words || 0} words. 
+      ${stats.sentences || 0} sentence${stats.sentences === 1 ? "" : "s"}. 
+      ${stats.paragraphs || 0} paragraph${stats.paragraphs === 1 ? "" : "s"}. 
+      Estimated read time: ${stats.estimatedReadTimeMinutes || 1} minute${stats.estimatedReadTimeMinutes === 1 ? "" : "s"}.
+    `;
+    return;
+  }
+
+  els.textBrief.textContent = `${countWords(text)} words.`;
+}
 
 
 /* -----------------------------
@@ -370,6 +398,11 @@ function clearAll(els) {
   if (els.output) els.output.value = "";
 
   updateCounters(els);
+
+  if (els.textBrief) {
+     els.textBrief.textContent =
+    "Paste text above, then clean it to see a quick summary of what PasteLint found.";
+}
 
   if (els.issuePanel) {
     els.issuePanel.innerHTML = "<li>Paste text to see a quick readability check.</li>";
