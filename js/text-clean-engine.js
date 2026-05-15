@@ -1,9 +1,155 @@
-function cleanText(input, options = {}) {
-  return {
-    original: input,
-    cleaned: cleanedText,
-    stats: {},
-    issues: [],
-    changes: []
+/* PasteLint Text Clean Engine
+   Shared cleanup layer.
+   No DOM access. No backend. No dependencies.
+*/
+
+(function () {
+  "use strict";
+
+  function toText(input) {
+    return String(input || "");
+  }
+
+  function addChange(changes, type, before, after, message) {
+    if (before !== after) {
+      changes.push({
+        type,
+        before,
+        after,
+        message
+      });
+    }
+  }
+
+  function removeHiddenCharacters(text, changes) {
+    const before = text;
+    const after = text.replace(/[\u200B-\u200D\uFEFF]/g, "").replace(/\u00A0/g, " ");
+    addChange(changes, "hidden-characters", before, after, "Removed hidden and non-breaking characters.");
+    return after;
+  }
+
+  function normalizeLineEndings(text, changes) {
+    const before = text;
+    const after = text.replace(/\r\n/g, "\n").replace(/\r/g, "\n");
+    addChange(changes, "line-endings", before, after, "Normalized line endings.");
+    return after;
+  }
+
+  function normalizeQuotes(text, changes) {
+    const before = text;
+    const after = text
+      .replace(/[“”]/g, '"')
+      .replace(/[‘’]/g, "'");
+    addChange(changes, "quotes", before, after, "Normalized smart quotes.");
+    return after;
+  }
+
+  function normalizeDashes(text, changes) {
+    const before = text;
+    const after = text
+      .replace(/[–—]/g, "-")
+      .replace(/\s+-\s+/g, " - ");
+    addChange(changes, "dashes", before, after, "Normalized dash characters.");
+    return after;
+  }
+
+  function normalizeSpacing(text, changes) {
+    const before = text;
+    let after = text;
+
+    after = after.replace(/[ \t]+/g, " ");
+    after = after.replace(/[ \t]+\n/g, "\n");
+    after = after.replace(/\n[ \t]+/g, "\n");
+    after = after.replace(/\n{3,}/g, "\n\n");
+    after = after.trim();
+
+    addChange(changes, "spacing", before, after, "Cleaned extra spacing and blank lines.");
+    return after;
+  }
+
+  function normalizePunctuationSpacing(text, changes) {
+    const before = text;
+    let after = text;
+
+    after = after.replace(/\s+([,.!?;:])/g, "$1");
+    after = after.replace(/([,.!?;:])([A-Za-z0-9])/g, "$1 $2");
+    after = after.replace(/\s{2,}/g, " ");
+
+    addChange(changes, "punctuation-spacing", before, after, "Repaired spacing around punctuation.");
+    return after;
+  }
+
+  function normalizeSymbolsForSpeech(text, changes) {
+    const before = text;
+    let after = text;
+
+    after = after.replace(/&/g, "and");
+    after = after.replace(/@/g, " at ");
+
+    addChange(changes, "speech-symbols", before, after, "Normalized common symbols for spoken output.");
+    return after;
+  }
+
+  function normalizeDbNumbers(text, changes) {
+    const before = text;
+
+    const after = text.replace(/\bDB\s*[-:]?\s*(\d{4,})\b/gi, function (_, digits) {
+      return "DB " + digits.split("").join("-");
+    });
+
+    addChange(changes, "db-number", before, after, "Normalized DB numbers for clearer text-to-speech.");
+    return after;
+  }
+
+  function cleanText(input, options = {}) {
+    const changes = [];
+    let cleaned = toText(input);
+
+    const settings = {
+      normalizeQuotes: options.normalizeQuotes !== false,
+      normalizeDashes: options.normalizeDashes !== false,
+      normalizeSpeechSymbols: options.normalizeSpeechSymbols === true,
+      normalizeDbNumbers: options.normalizeDbNumbers === true
+    };
+
+    cleaned = normalizeLineEndings(cleaned, changes);
+    cleaned = removeHiddenCharacters(cleaned, changes);
+
+    if (settings.normalizeQuotes) {
+      cleaned = normalizeQuotes(cleaned, changes);
+    }
+
+    if (settings.normalizeDashes) {
+      cleaned = normalizeDashes(cleaned, changes);
+    }
+
+    if (settings.normalizeDbNumbers) {
+      cleaned = normalizeDbNumbers(cleaned, changes);
+    }
+
+    if (settings.normalizeSpeechSymbols) {
+      cleaned = normalizeSymbolsForSpeech(cleaned, changes);
+    }
+
+    cleaned = normalizePunctuationSpacing(cleaned, changes);
+    cleaned = normalizeSpacing(cleaned, changes);
+
+    const analyzer = window.PasteLintAnalyzer;
+    const analysis = analyzer && typeof analyzer.analyzeText === "function"
+      ? analyzer.analyzeText(cleaned)
+      : null;
+
+    return {
+      original: toText(input),
+      cleaned,
+      changes,
+      analysis
+    };
+  }
+
+  window.PasteLintCleanEngine = {
+    cleanText,
+    normalizeDbNumbers,
+    normalizeSymbolsForSpeech
   };
-}
+})();
