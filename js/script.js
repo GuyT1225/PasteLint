@@ -184,16 +184,7 @@ function runPreAnalysis(els) {
       ? issues.map(issue => `<li>${escapeHTML(issue)}</li>`).join("")
       : "<li>No obvious issues detected.</li>";
 }
-
-  const issues = detectIssues(text);
-
-  if (els.issuePanel) {
-    els.issuePanel.innerHTML = issues.length
-      ? issues.map(issue => `<li>${escapeHTML(issue)}</li>`).join("")
-      : "<li>No obvious issues detected.</li>";
-  }
 }
-
 function detectIssues(text) {
   const issues = [];
   const sentences = text.split(/[.!?]/).filter(Boolean);
