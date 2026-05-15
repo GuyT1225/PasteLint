@@ -133,7 +133,14 @@
         message: "Slash characters may sound awkward in TTS or screen readers."
       });
     }
-
+     
+     if (/[—–]/.test(value)) {
+       risks.push({
+         type: "dash-character",
+         severity: "low",
+         message: "Em dashes or en dashes may create awkward pauses in speech synthesis."
+     });
+   }
     if (/&/.test(value)) {
       risks.push({
         type: "ampersand",
