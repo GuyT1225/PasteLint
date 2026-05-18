@@ -327,29 +327,51 @@ function renderVisualPreview(els, before, after) {
     return;
   }
 
-  const beforeWords = before.split(/\s+/);
-  const afterWords = after.split(/\s+/);
+  const changes = [];
 
-  let preview = "";
-
-  for (
-    let i = 0;
-    i < Math.min(12, beforeWords.length, afterWords.length);
-    i++
-  ) {
-    if (beforeWords[i] !== afterWords[i]) {
-      preview += `
-        <div class="edit-item">
-          <span class="edit-before">${escapeHTML(beforeWords[i])}</span>
-          <span class="edit-arrow">→</span>
-          <span class="edit-after">${escapeHTML(afterWords[i])}</span>
-        </div>
-      `;
-    }
+  if (before.includes("     ") && !after.includes("     ")) {
+    changes.push({
+      before: "broken     spacing",
+      after: "broken spacing"
+    });
   }
 
-  panel.innerHTML =
-    preview || "<div>No visible cleanup differences detected.</div>";
+  if (before.includes("—") && !after.includes("—")) {
+    changes.push({
+      before: "—",
+      after: "-"
+    });
+  }
+
+  if (before.includes("@") && !after.includes("@")) {
+    changes.push({
+      before: "@",
+      after: "at"
+    });
+  }
+
+  if (before.includes("10:00") && after.includes("10 00")) {
+    changes.push({
+      before: "10:00",
+      after: "10 00"
+    });
+  }
+
+  if (!changes.length) {
+    panel.innerHTML =
+      "<div>No visible cleanup differences detected.</div>";
+    return;
+  }
+
+  panel.innerHTML = changes
+    .map(change => `
+      <div class="edit-item">
+        <span class="edit-before">${escapeHTML(change.before)}</span>
+        <span class="edit-arrow">→</span>
+        <span class="edit-after">${escapeHTML(change.after)}</span>
+      </div>
+    `)
+    .join("");
 }
 
 function renderTextBrief(els, text) {
@@ -379,7 +401,6 @@ function renderTextBrief(els, text) {
 
   els.textBrief.textContent = `${countWords(text)} words.`;
 }
-
 /* -----------------------------
    COUNTERS
 ----------------------------- */
@@ -394,8 +415,6 @@ function updateCounters(els) {
   setText(els.outputWordCount, `${countWords(output)} words`);
 }
 
-
-
 function countWords(text) {
   return (text.trim().match(/\b\w+\b/g) || []).length;
 }
@@ -407,13 +426,25 @@ function countWords(text) {
 function copyOutput(els) {
   if (!els.output?.value) return;
 
-  navigator.clipboard.writeText(els.output.value).catch(() => {
-    els.output.select();
-    document.execCommand("copy");
-  });
+  const confirmCopied = () => {
+    if (!els.copyBtn) return;
+
+    const originalText = els.copyBtn.textContent;
+    els.copyBtn.textContent = "Copied";
+
+    setTimeout(() => {
+      els.copyBtn.textContent = originalText;
+    }, 1200);
+  };
+
+  navigator.clipboard.writeText(els.output.value)
+    .then(confirmCopied)
+    .catch(() => {
+      els.output.select();
+      document.execCommand("copy");
+      confirmCopied();
+    });
 }
-
-
 
 function clearAll(els) {
   if (els.input) els.input.value = "";
@@ -422,12 +453,13 @@ function clearAll(els) {
   updateCounters(els);
 
   if (els.textBrief) {
-     els.textBrief.textContent =
-    "Paste text above, then clean it to see a quick summary of what PasteLint found.";
-}
+    els.textBrief.textContent =
+      "Paste text above, then clean it to see a quick summary of what PasteLint found.";
+  }
 
   if (els.issuePanel) {
-    els.issuePanel.innerHTML = "<li>Paste text to see a quick readability check.</li>";
+    els.issuePanel.innerHTML =
+      "<li>Paste text to see a quick readability check.</li>";
   }
 
   if (els.impactPanel) {
@@ -440,10 +472,13 @@ function clearAll(els) {
 
   if (els.changePreview) {
     els.changePreview.textContent =
-"Paste text and click Clean Text to see visible changes.";  
-}
-}
+      "PasteLint will show a simple before and after view once text is cleaned.";
+  }
 
+  if (els.editMap) {
+    els.editMap.textContent = "Paste text and click Clean Text to see visible changes.";
+  }
+}
 
 /* -----------------------------
    HELPERS
@@ -464,8 +499,12 @@ function getCleanMode(els) {
   return els.modeToggle.value === "line" ? "line" : "paragraph";
 }
 
-function setOutput(els, text) {
-  if (els.output) els.output.value = text;
+ function setOutput(els, text) {
+  if (els.output) {
+    els.output.value = text;
+  }
+
+  updateCounters(els);
 }
 
 function setText(el, text) {
