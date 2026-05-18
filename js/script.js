@@ -266,6 +266,11 @@ function handleClean(els) {
   
 
   renderEditPreview(els, result.edits, result.changes);
+  renderVisualPreview(
+  els,
+  raw,
+  result.text
+);
   updateCounters(els);
 }
 
@@ -311,6 +316,42 @@ function renderEditPreview(els, edits, changes = []) {
   target.innerHTML = [...changeItems, ...editItems].join("");
 }
 
+function renderVisualPreview(els, before, after) {
+  const panel = els.changePreview;
+
+  if (!panel) return;
+
+  if (!before || !after) {
+    panel.textContent =
+      "PasteLint will show a simple before and after view once text is cleaned.";
+    return;
+  }
+
+  const beforeWords = before.split(/\s+/);
+  const afterWords = after.split(/\s+/);
+
+  let preview = "";
+
+  for (
+    let i = 0;
+    i < Math.min(12, beforeWords.length, afterWords.length);
+    i++
+  ) {
+    if (beforeWords[i] !== afterWords[i]) {
+      preview += `
+        <div class="edit-item">
+          <span class="edit-before">${escapeHTML(beforeWords[i])}</span>
+          <span class="edit-arrow">→</span>
+          <span class="edit-after">${escapeHTML(afterWords[i])}</span>
+        </div>
+      `;
+    }
+  }
+
+  panel.innerHTML =
+    preview || "<div>No visible cleanup differences detected.</div>";
+}
+
 function renderTextBrief(els, text) {
   if (!els.textBrief) return;
 
@@ -338,7 +379,6 @@ function renderTextBrief(els, text) {
 
   els.textBrief.textContent = `${countWords(text)} words.`;
 }
-
 
 /* -----------------------------
    COUNTERS
