@@ -271,6 +271,7 @@ function handleClean(els) {
   els,
   raw,
   result.text
+  result.changes
 );
   updateCounters(els);
 }
@@ -317,7 +318,7 @@ function renderEditPreview(els, edits, changes = []) {
   target.innerHTML = [...changeItems, ...editItems].join("");
 }
 
-function renderVisualPreview(els, before, after) {
+function renderVisualPreview(els, before, after, changes = []) {
   const panel = els.visualPreview;
 
   if (!panel) return;
@@ -328,108 +329,62 @@ function renderVisualPreview(els, before, after) {
     return;
   }
 
-  const changes = [];
+  const previewRows = [];
 
-  if (before.includes("     ") && !after.includes("     ")) {
-    changes.push({
+  const changeTypes = Array.isArray(changes)
+    ? changes.map(change => change.type).filter(Boolean)
+    : [];
+
+  if (changeTypes.includes("spacing")) {
+    previewRows.push({
       before: "extra spacing",
       after: "normalized spacing"
     });
   }
 
-  if (before.includes("—") && !after.includes("—")) {
-    changes.push({
-       before: "em dash",
-       after: "dash"
+  if (changeTypes.includes("dashes")) {
+    previewRows.push({
+      before: "em dash",
+      after: "dash"
     });
   }
 
-  if (before.includes("@") && !after.includes("@")) {
-    changes.push({
-      before: "@",
-      after: "at"
+  if (changeTypes.includes("punctuation-spacing")) {
+    previewRows.push({
+      before: "punctuation spacing",
+      after: "repaired punctuation"
     });
   }
 
-if (before.includes("10:00")) {
-  changes.push({
-    before: "speech time",
-    after: "10 00"
-  });
-}
+  if (before.includes("10:00")) {
+    previewRows.push({
+      before: "speech time",
+      after: "10 00"
+    });
+  }
 
-  if (!changes.length) {
+  if (before.includes("@")) {
+    previewRows.push({
+      before: "@ symbol",
+      after: "spoken at"
+    });
+  }
+
+  if (!previewRows.length) {
     panel.innerHTML =
       "<div>No visible cleanup differences detected.</div>";
     return;
   }
 
-  panel.innerHTML = changes
-    .map(change => `
+  panel.innerHTML = previewRows
+    .map(row => `
       <div class="edit-item">
-        <span class="edit-before">${escapeHTML(change.before)}</span>
+        <span class="edit-before">${escapeHTML(row.before)}</span>
         <span class="edit-arrow">→</span>
-        <span class="edit-after">${escapeHTML(change.after)}</span>
+        <span class="edit-after">${escapeHTML(row.after)}</span>
       </div>
     `)
     .join("");
-}
-
-function renderTextBrief(els, before, after, changes = []) {
-  if (!els.textBrief) return;
-
-  if (!after) {
-    els.textBrief.textContent =
-      "Paste text above, then clean it to see a quick summary of what PasteLint found.";
-    return;
-  }
-
-  const removedChars = Math.max(0, before.length - after.length);
-  const changeTypes = Array.isArray(changes)
-    ? changes.map(change => change.type).filter(Boolean)
-    : [];
-
-  const cleanedNotes = [];
-
-  if (removedChars > 0) {
-    cleanedNotes.push(`Cleaned ${removedChars} characters`);
-  }
-
-  if (changeTypes.includes("spacing")) {
-    cleanedNotes.push("normalized spacing");
-  }
-
-  if (
-    changeTypes.includes("dashes") ||
-    changeTypes.includes("punctuation-spacing")
-  ) {
-    cleanedNotes.push("normalized punctuation");
-  }
-
-  if (
-    window.PasteLintAnalyzer &&
-    typeof window.PasteLintAnalyzer.analyzeText === "function"
-  ) {
-    const analysis = window.PasteLintAnalyzer.analyzeText(after);
-    const stats = analysis.stats || {};
-
-    const summary = `
-      ${stats.words || 0} words. 
-      ${stats.sentences || 0} sentence${stats.sentences === 1 ? "" : "s"}. 
-      ${stats.paragraphs || 0} paragraph${stats.paragraphs === 1 ? "" : "s"}. 
-      Estimated read time: ${stats.estimatedReadTimeMinutes || 1} minute${stats.estimatedReadTimeMinutes === 1 ? "" : "s"}.
-    `;
-
-    els.textBrief.textContent = cleanedNotes.length
-      ? `${summary.trim()} ${cleanedNotes.join(", ")}.`
-      : summary.trim();
-
-    return;
-  }
-
-  els.textBrief.textContent = cleanedNotes.length
-    ? `${countWords(after)} words. ${cleanedNotes.join(", ")}.`
-    : `${countWords(after)} words.`;
 }
 /* -----------------------------
    COUNTERS
