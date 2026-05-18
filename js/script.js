@@ -339,8 +339,8 @@ function renderVisualPreview(els, before, after) {
 
   if (before.includes("—") && !after.includes("—")) {
     changes.push({
-      before: "—",
-      after: "-"
+       before: "em dash",
+    after: "dash"
     });
   }
 
