@@ -263,7 +263,7 @@ function handleClean(els) {
 
   setOutput(els, result.text);
   runPreAnalysis(els);
-  renderTextBrief(els, result.text);
+  renderTextBrief(els, raw, result.text, result.changes);
   
 
   renderEditPreview(els, result.edits, result.changes);
@@ -375,32 +375,61 @@ if (before.includes("10:00")) {
     .join("");
 }
 
-function renderTextBrief(els, text) {
+function renderTextBrief(els, before, after, changes = []) {
   if (!els.textBrief) return;
 
-  if (!text) {
+  if (!after) {
     els.textBrief.textContent =
       "Paste text above, then clean it to see a quick summary of what PasteLint found.";
     return;
+  }
+
+  const removedChars = Math.max(0, before.length - after.length);
+  const changeTypes = Array.isArray(changes)
+    ? changes.map(change => change.type).filter(Boolean)
+    : [];
+
+  const cleanedNotes = [];
+
+  if (removedChars > 0) {
+    cleanedNotes.push(`Cleaned ${removedChars} characters`);
+  }
+
+  if (changeTypes.includes("spacing")) {
+    cleanedNotes.push("normalized spacing");
+  }
+
+  if (
+    changeTypes.includes("dashes") ||
+    changeTypes.includes("punctuation-spacing")
+  ) {
+    cleanedNotes.push("normalized punctuation");
   }
 
   if (
     window.PasteLintAnalyzer &&
     typeof window.PasteLintAnalyzer.analyzeText === "function"
   ) {
-    const analysis = window.PasteLintAnalyzer.analyzeText(text);
+    const analysis = window.PasteLintAnalyzer.analyzeText(after);
     const stats = analysis.stats || {};
 
-    els.textBrief.innerHTML = `
+    const summary = `
       ${stats.words || 0} words. 
       ${stats.sentences || 0} sentence${stats.sentences === 1 ? "" : "s"}. 
       ${stats.paragraphs || 0} paragraph${stats.paragraphs === 1 ? "" : "s"}. 
       Estimated read time: ${stats.estimatedReadTimeMinutes || 1} minute${stats.estimatedReadTimeMinutes === 1 ? "" : "s"}.
     `;
+
+    els.textBrief.textContent = cleanedNotes.length
+      ? `${summary.trim()} ${cleanedNotes.join(", ")}.`
+      : summary.trim();
+
     return;
   }
 
-  els.textBrief.textContent = `${countWords(text)} words.`;
+  els.textBrief.textContent = cleanedNotes.length
+    ? `${countWords(after)} words. ${cleanedNotes.join(", ")}.`
+    : `${countWords(after)} words.`;
 }
 /* -----------------------------
    COUNTERS
