@@ -462,33 +462,29 @@ section,
 
 .info-tip{
   position:relative;
-  width:14px;
-  height:14px;
-  min-width:14px;
-
-  border:1px solid currentColor;
-  border-radius:50%;
+  border:0;
   background:transparent;
   color:inherit;
-  opacity:.6;
+  opacity:.45;
 
-  font-size:9px;
+  font-size:.72rem;
   font-weight:700;
-  font-family:Arial, sans-serif;
-  line-height:14px;
-  text-align:center;
+  line-height:1;
 
   cursor:help;
-  display:inline-block;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
 
-  padding:0;
+  padding:0 .15rem;
   margin-left:.15rem;
   transform:translateY(-1px);
 }
 
 .info-tip:hover,
 .info-tip:focus-visible{
-  opacity:.95;
+  opacity:.85;
+  text-decoration:underline;
 }
 .tooltip{
   position:absolute;
