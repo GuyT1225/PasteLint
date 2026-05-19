@@ -181,8 +181,8 @@
       cleaned = normalizeSymbolsForSpeech(cleaned, changes);
     }
 
-    cleaned = normalizePunctuationSpacing(cleaned, changes);
-    cleaned = normalizeSpacing(cleaned, changes);
+     cleaned = normalizeSpacing(cleaned, changes);
+     cleaned = normalizePunctuationSpacing(cleaned, changes);
 
     const analyzer = window.PasteLintAnalyzer;
     const analysis =
