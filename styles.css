@@ -457,64 +457,56 @@ section,
 .panel-header h3{
   display:flex;
   align-items:center;
-  gap:.5rem;
+  gap:.4rem;
 }
 
 .info-tip{
   position:relative;
-
-  width:18px;
-  height:18px;
-
-  border:1px solid var(--accent,#00ff9d);
-
+  width:15px;
+  height:15px;
+  border:1px solid currentColor;
   border-radius:50%;
-
-  background:none;
-
+  background:transparent;
   color:inherit;
-
-  font-size:.72rem;
+  opacity:.7;
+  font-size:.62rem;
   font-weight:700;
-
+  line-height:1;
   cursor:help;
-
-  display:flex;
+  display:inline-flex;
   align-items:center;
   justify-content:center;
+  transform:translateY(-1px);
+}
+
+.info-tip:hover,
+.info-tip:focus-visible{
+  opacity:1;
 }
 
 .tooltip{
   position:absolute;
-
-  left:24px;
-  top:-8px;
-
-  width:240px;
-
-  padding:.7rem;
-
-  border-radius:8px;
-
-  background:rgba(0,0,0,.95);
-
-  border:1px solid var(--accent,#00ff9d);
-
-  font-size:.78rem;
-
-  line-height:1.35;
-
+  left:22px;
+  top:-10px;
+  width:230px;
+  padding:.65rem .75rem;
+  border-radius:10px;
+  background:#07110d;
+  border:1px solid currentColor;
+  color:#f4fff8;
+  font-size:.76rem;
+  font-weight:500;
+  line-height:1.4;
+  text-align:left;
   opacity:0;
-
   pointer-events:none;
-
-  transition:.15s;
-
+  transition:opacity .15s ease;
   z-index:50;
+  box-shadow:0 10px 28px rgba(0,0,0,.35);
 }
 
 .info-tip:hover .tooltip,
-.info-tip:focus .tooltip{
+.info-tip:focus-visible .tooltip{
   opacity:1;
 }
 
