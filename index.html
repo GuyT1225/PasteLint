@@ -88,33 +88,85 @@
         </div>
       </div>
 
-      <div class="tool-panel insight-panel">
-        <h2>Text Brief</h2>
-        <div id="textBrief">
-          Paste text above, then clean it to see a quick summary of what PasteLint found.
-        </div>
-      </div>
+<div class="tool-panel insight-panel">
 
-      <div class="tool-panel insight-panel">
-        <h2>What PasteLint Found</h2>
-        <ul id="foundList">
-          <li>No cleanup issues detected yet.</li>
-        </ul>
-      </div>
+  <div class="panel-header">
+    <h3>
+      Text Brief
+      <button class="info-tip" aria-label="About Text Brief">
+        i
+        <span class="tooltip">
+          Summary of cleaned text including word count, sentences, paragraphs, reading time, and cleanup activity.
+        </span>
+      </button>
+    </h3>
+  </div>
 
-      <div class="tool-panel insight-panel">
-        <h2>Edit Map</h2>
-        <div id="editMap">
-          Changes will appear here after cleanup.
-        </div>
-      </div>
+  <div id="textBrief">
+    Paste text above, then clean it to see a quick summary of what PasteLint found.
+  </div>
 
-      <div class="tool-panel insight-panel">
-        <h2>Visual cleanup preview</h2>
-       <div id="visualPreview">
-  PasteLint will show a simple before and after view once text is cleaned.
 </div>
-      </div>
+
+<div class="tool-panel insight-panel">
+
+  <div class="panel-header">
+    <h3>
+      What PasteLint Found
+      <button class="info-tip" aria-label="About What PasteLint Found">
+        i
+        <span class="tooltip">
+          Issues detected before or during cleanup such as spacing, formatting, readability, and speech related findings.
+        </span>
+      </button>
+    </h3>
+  </div>
+
+  <ul id="foundList">
+    <li>No cleanup issues detected yet.</li>
+  </ul>
+
+</div>
+
+<div class="tool-panel insight-panel">
+
+  <div class="panel-header">
+    <h3>
+      Edit Map
+      <button class="info-tip" aria-label="About Edit Map">
+        i
+        <span class="tooltip">
+          Lists changes PasteLint applied and explains what was modified.
+        </span>
+      </button>
+    </h3>
+  </div>
+
+  <div id="editMap">
+    Changes will appear here after cleanup.
+  </div>
+
+</div>
+
+<div class="tool-panel insight-panel">
+
+  <div class="panel-header">
+    <h3>
+      Visual cleanup preview
+      <button class="info-tip" aria-label="About Visual Cleanup Preview">
+        i
+        <span class="tooltip">
+          Shows examples of cleanup actions and how text was changed.
+        </span>
+      </button>
+    </h3>
+  </div>
+
+  <div id="visualPreview">
+    PasteLint will show a simple before and after view once text is cleaned.
+  </div>
+
+</div>
     </section>
 
     <section class="trust-panel">
