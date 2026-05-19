@@ -462,32 +462,45 @@ section,
 
 .info-tip{
   position:relative;
-  width:15px;
-  height:15px;
+
+  width:12px;
+  height:12px;
+
   border:1px solid currentColor;
   border-radius:50%;
+
   background:transparent;
+
   color:inherit;
-  opacity:.7;
-  font-size:.62rem;
-  font-weight:700;
+
+  opacity:.55;
+
+  font-size:.50rem;
+  font-weight:600;
+
   line-height:1;
+
   cursor:help;
+
   display:inline-flex;
   align-items:center;
   justify-content:center;
-  transform:translateY(-1px);
+
+  transform:translateY(-2px);
+
+  padding:0;
+
+  margin-left:.1rem;
 }
 
 .info-tip:hover,
 .info-tip:focus-visible{
-  opacity:1;
+  opacity:.9;
 }
-
 .tooltip{
   position:absolute;
-  left:22px;
-  top:-10px;
+  left:18px;
+  top:-4px;
   width:230px;
   padding:.65rem .75rem;
   border-radius:10px;
